@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import BooklistScreen from './screens/BooklistScreen';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <SafeAreaView>
+      <BooklistScreen />
+      <StatusBar style="auto" translucent={false} />
+    </SafeAreaView>
+  ) 
 }
 
 const styles = StyleSheet.create({
