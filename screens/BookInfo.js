@@ -23,17 +23,22 @@ function BookInfo ({bookId}) {
 
       // Buildings
       // organisations: ex. "heli-kirjastot"
-      const libraryOrganisation = buildings.filter((element) => {
-        return element.value.startsWith("0")
+      const librariesCleaner = buildings.filter((element) => {
+        return element.value.startsWith("0") || element.value.startsWith("1") || element.value.startsWith("2")
       })
-      // regions: ex. "Mikkeli"
-      const libraryRegion = buildings.filter((element) => {
-        return element.value.startsWith("1")
-      })
-      // library: ex. "Oulun pääkirjasto"
-      const library = buildings.filter((element) => {
-        return element.value.startsWith("2")
-      })
+
+      const libraryOrganisation = []
+      const libraryRegion = []
+      const library = []
+
+      librariesCleaner.forEach((element) => {
+        if (element.value.startsWith("0")){
+          libraryOrganisation.push(element)
+        } else if (element.value.startsWith("1")){
+          libraryRegion.push(element)
+        } else if (element.value.startsWith("2")){
+          library.push(element)
+      }})
 
       const values = {bookTitle, year, rating, languages, images, authors, libraryOrganisation, libraryRegion, library, formats }
       setBookInfo(values)
