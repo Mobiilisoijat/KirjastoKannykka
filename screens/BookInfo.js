@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { View, Button, Text, Image, TouchableOpacity, Alert } from "react-native";
+import ReadingListPopUp from "../components/ReadingListPopUp";
 
 function BookInfo ({bookId}) {
   const [bookInfo, setBookInfo] = useState(null)
+  const [isPopUpVisible, setPopUpVisible] = useState(false)
+
+  const handlePopUp = () => {
+    setPopUpVisible(!isPopUpVisible)
+  }
 
   const getBookInfo = async (bookId) => {
     try {
@@ -92,10 +98,11 @@ function BookInfo ({bookId}) {
               */
             }
             <TouchableOpacity
-              onPress={() => Alert.alert("Taa on testi")}
+              onPress={handlePopUp}
             >
               <Text>Lisää lukulistalle</Text>
             </TouchableOpacity>
+            {isPopUpVisible && <ReadingListPopUp/>}
             {bookInfo.authors.map((person) => (
               <Text key={person.name}>{person.name} - {person.role || "Tuntematon rooli"}</Text>
             ))}
