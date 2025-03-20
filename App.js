@@ -2,13 +2,14 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import BookInfo from './screens/BookInfo';
 
-// kirjava.4159324e6346542f4141414141413d3d   Minna Kurjenluoma : lost in between : landscapes
-// fikka.5779724   Kurjet lentävät etelään
+// fikka.5779724   Kurjet lentävät etelään , no image and no ratings, unknown roles
+// anders.1948617 , image and ratings
+// helmet.2254970 , swedish book. image and multiple locations
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <BookInfo bookId={"jyx.123456789_43926"}/>
+      <BookInfo bookId={"helmet.2254970"}/>
       <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
