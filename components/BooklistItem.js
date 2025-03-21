@@ -6,9 +6,11 @@ const BooklistItem = ({item}) => {
     <Pressable
         style={[styles.item]}
     >
-        <Text>{item.title}</Text>
-        <Text>{item.author}</Text>
-        <Text>{item.score}</Text>
+        <View style={{flex: 1}}>
+        <Text style={{fontSize: 18}}>{item.title}</Text>
+        <Text style={{fontSize: 14}}>{item.author}</Text>
+        </View>
+        <Text style={{fontSize: 20}}>{item.score}</Text>
         <Pressable>
 
         </Pressable>
@@ -20,6 +22,10 @@ export default BooklistItem
 
 const styles = StyleSheet.create({
     item: {
-
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginVertical: 6,
+        marginRight: 4
     }
 })
