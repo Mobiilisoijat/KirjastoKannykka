@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import Checkbox from "expo-checkbox";
 
 function ReadingListPopUp () {
-  // we need to get status data from database
+  // we need to get status data from database KJJKJKLKLLJ
   const checkBoxData = [
     {
       text: "Luettu",
