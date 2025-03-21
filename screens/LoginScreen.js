@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, ActivityIndicator, KeyboardAvoidingView, } from 'react-native'
 import React, { useState } from 'react'
-import { FIREBASE_AUTH } from '../database/FirebaseConfig'
-import { TextInput } from 'react-native-paper'
+import { FIREBASE_AUTH, FIREBASE_DB } from '../database/FirebaseConfig'
+import { TextInput, Button } from 'react-native-paper'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 
 
@@ -28,6 +28,13 @@ const LoginScreen = () => {
     setLoading(true)
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user
+        const userData = {
+          email: email
+        }
+        console.log(user)
+      })
       console.log(response)
       alert('Check your emails!')
     } catch (error) {
@@ -40,14 +47,17 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput value={email} style={styles.input} placeholder='Email' autoCapitalize='none' onChangeText={(text) => setEmail(text)} />
-      <TextInput secureTextEntry={true} value={password} style={styles.input} placeholder='Password' autoCapitalize='none' onChangeText={(text) => setPassword(text)} />
-      { loading ? <ActivityIndicator size='large' color='#0000ff' /> 
-      : (
-        <>
-          <Button title='Login' onPress={() => signIn()} />
-        </>
-      )}  
+      <KeyboardAvoidingView behavior='padding'>
+        <TextInput style={styles.input} value={email} placeholder='Email' autoCapitalize='none' onChangeText={(text) => setEmail(text)} />
+        <TextInput style={styles.input} secureTextEntry={true} value={password} placeholder='Password' autoCapitalize='none' onChangeText={(text) => setPassword(text)} />
+        { loading ? <ActivityIndicator size='large' color='#0000ff' /> 
+        : (
+          <>
+            <Button style={styles.button} mode="contained" title='Login' onPress={() => signIn()}>Login</Button>
+            <Button style={styles.button} mode="contained" title='Create account' onPress={() => signUp()}>Create account</Button>
+          </>
+        )}  
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -58,7 +68,6 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 20,
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
   },
   input: {
@@ -69,4 +78,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
   },
+  button: {
+    marginVertical: 4,
+  }
 })
