@@ -8,6 +8,7 @@ import Testi from './screens/Testi';
 import LogoutTesti from './screens/LogoutTesti';
 import BookSearchPage from './screens/BookSearchPage';
 import BooklistScreen from './screens/BooklistScreen';
+import BookInfo from './screens/BookInfo';
 
 
 const Stack = createNativeStackNavigator();
@@ -21,14 +22,10 @@ function InsideLayout() {
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Testi" component={Testi} />
       <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
+      <InsideStack.Screen name="BookInfo" component={BookInfo} />
     </InsideStack.Navigator>
   );
 }
-import BookInfo from './screens/BookInfo';
-
-// fikka.5779724   Kurjet lentävät etelään , no image and no ratings, unknown roles
-// anders.1948617 , image and ratings
-// helmet.2254970 , english book. multiple locations
 
 export default function App() {
   const [user, setUser] = useState(null);

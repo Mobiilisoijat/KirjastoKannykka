@@ -40,3 +40,4 @@ yarn-error.*
 
 #firebase config
 database/FirebaseConfig.js
+firebase/Config.js

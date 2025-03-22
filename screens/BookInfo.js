@@ -6,6 +6,7 @@ import LikeButton from "../components/LikeButton";
 function BookInfo ({bookId}) {
   const [bookInfo, setBookInfo] = useState(null)
   const [isPopUpVisible, setPopUpVisible] = useState(false)
+  bookId = "kronoby.85704" // for testing
 
   const handlePopUp = () => {
     setPopUpVisible(!isPopUpVisible)
