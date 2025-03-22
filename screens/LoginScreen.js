@@ -1,11 +1,9 @@
 import { StyleSheet, Text, View, ActivityIndicator, KeyboardAvoidingView, } from 'react-native'
 import React, { useState } from 'react'
-import { FIREBASE_AUTH, FIREBASE_DB } from '../database/FirebaseConfig'
+import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase/Config'
 import { TextInput, Button } from 'react-native-paper'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { collection, doc, setDoc } from 'firebase/firestore'
-
-
+import { doc, setDoc } from 'firebase/firestore'
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -46,6 +44,7 @@ const LoginScreen = () => {
   }
 
   return (
+
     <View style={styles.container}>
       <KeyboardAvoidingView behavior='padding'>
         <TextInput style={styles.input} value={email} placeholder='Email' autoCapitalize='none' onChangeText={(text) => setEmail(text)} />
@@ -60,6 +59,7 @@ const LoginScreen = () => {
       </KeyboardAvoidingView>
     </View>
   );
+
 }
 
 export default LoginScreen
