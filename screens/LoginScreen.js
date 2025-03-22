@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { FIREBASE_AUTH, FIREBASE_DB } from '../database/FirebaseConfig'
 import { TextInput, Button } from 'react-native-paper'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { collection, doc, setDoc } from 'firebase/firestore'
+
 
 
 const LoginScreen = () => {
@@ -27,15 +29,13 @@ const LoginScreen = () => {
   const signUp = async () => {
     setLoading(true)
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user
-        const userData = {
-          email: email
-        }
-        console.log(user)
-      })
-      console.log(response)
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+      const userData = {
+        email: user.email
+      }
+      await setDoc(doc(FIREBASE_DB, 'users', user.uid), userData)
+      console.log(user)
       alert('Check your emails!')
     } catch (error) {
       console.log(error)
