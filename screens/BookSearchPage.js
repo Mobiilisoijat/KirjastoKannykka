@@ -22,6 +22,7 @@ export default function BookSearchPage({navigation}) {
         <BookCarousel />
         <BookList />
         <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')}>Testipage</Button>
+        <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('BooklistScreen')}>Testipage</Button>
         <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()}>Log out</Button>
       </View>
     </SafeAreaView>

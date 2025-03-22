@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, FlatList, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import BooklistItem from '../components/BooklistItem'
+import { FIREBASE_DB, BOOKLIST, USERS, USERID } from '../firebase/Config'
 import { v4 as uuidv4 } from "uuid"
-import { doc, addDoc, collection, BOOKLIST, USERS, USERID, firestore, deleteDoc, onSnapshot, query, setDoc } from '../firebase/Config'
+import { doc, addDoc, collection, deleteDoc, onSnapshot, query, setDoc } from 'firebase/firestore'
 import { Button } from 'react-native-paper'
 
 const BookList = ({toggleState, textInput}) => {
@@ -46,7 +47,7 @@ const BookList = ({toggleState, textInput}) => {
     saveTEST()
     
     //get users booklist data from firebase
-    const queryRef = query(collection(firestore, USERS, USERID, BOOKLIST))
+    const queryRef = query(collection(FIREBASE_DB, USERS, USERID, BOOKLIST))
     const unsubscribeSnapshot = onSnapshot(queryRef, (querySnapshot) => {
         const booklist = []
         querySnapshot.forEach((doc) => {
@@ -62,7 +63,7 @@ const BookList = ({toggleState, textInput}) => {
   const save = async () => {
     try {
     for (const book of testList) {
-        const bookRef = doc(firestore, USERS, USERID, BOOKLIST, String(book.id));
+        const bookRef = doc(FIREBASE_DB, USERS, USERID, BOOKLIST, String(book.id));
         await setDoc(bookRef, { title: book.title, author: book.author, score: book.score, state: book.state });
     }
     } catch (error) {

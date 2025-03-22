@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from 'react-native'
 import React from 'react'
-import { FIREBASE_AUTH } from '../database/FirebaseConfig'
+import { FIREBASE_AUTH } from '../firebase/Config'
 import { Button } from 'react-native-paper'
 
 
