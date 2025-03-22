@@ -9,7 +9,7 @@ import { PaperProvider } from 'react-native-paper'
 
 
 export default function BookSearchPage({navigation}) {
-    
+
     return (
       <PaperProvider>
       <MenuProvider>
@@ -17,11 +17,12 @@ export default function BookSearchPage({navigation}) {
       <View>
         <TopAppSearchBar />
         <Text style={{color:"tomato"}}>BookSearchPage</Text>
-        
+
         <Button title="juu"></Button>
         <BookCarousel />
         <BookList />
         <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')}>Testipage</Button>
+        <Button style={styles.button} mode='contained' title='BookInfo' onPress={() => navigation.navigate('BookInfo')}/>
         <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('BooklistScreen')}>Testipage</Button>
         <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()}>Log out</Button>
       </View>

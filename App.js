@@ -8,6 +8,7 @@ import Testi from './screens/Testi';
 import LogoutTesti from './screens/LogoutTesti';
 import BookSearchPage from './screens/BookSearchPage';
 import BooklistScreen from './screens/BooklistScreen';
+import BookInfo from './screens/BookInfo';
 
 
 const Stack = createNativeStackNavigator();
@@ -21,10 +22,10 @@ function InsideLayout() {
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Testi" component={Testi} />
       <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
+      <InsideStack.Screen name="BookInfo" component={BookInfo} />
     </InsideStack.Navigator>
   );
 }
-
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -41,11 +42,11 @@ export default function App() {
         { user ? (
           <Stack.Screen name="Inside" component={InsideLayout} options={{ headerShown: false }} />
 
-        ) : ( 
-          
-            
+        ) : (
+
+
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-          
+
         )}
       </Stack.Navigator>
     </NavigationContainer>
