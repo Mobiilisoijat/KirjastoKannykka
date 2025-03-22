@@ -2,7 +2,7 @@ import { View, Text, StyleSheet,  } from 'react-native'
 import React, { useReducer, useState, } from 'react'
 import { Searchbar,  PaperProvider, Button, IconButton } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
-import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu'
+import { Menu, MenuOption, MenuOptions, MenuTrigger, triggerOnLongPress } from 'react-native-popup-menu'
 
 
 export default function TopAppSearchBar() {
@@ -22,16 +22,20 @@ export default function TopAppSearchBar() {
         onChangeText={(text) => dispatch({type: 'search', text: text})}
         value={state.text}
         icon="menu"
-        onIconPress={openMenu}
+        onIconPress={triggerOnLongPress}
         />
-
+        
         <Menu>
-            <MenuTrigger text='Select action'  />
-            <MenuOptions>
-                <MenuOption onSelect={() => alert("save")} text="save" />
-                <MenuOption onSelect={() => alert("del")} text="dell" /> 
-            </MenuOptions>
+        <MenuTrigger />
+        <MenuOptions>
+            <MenuOption onSelect={() => alert("save")} text="save" />
+            <MenuOption onSelect={() => alert("del")} text="dell" /> 
+        </MenuOptions>
         </Menu>
+
+        
+
+        
 
         <PaperProvider>
         <View style={{padding:50}}>        

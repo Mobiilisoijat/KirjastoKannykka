@@ -5,10 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import BookCarousel from '../components/bookSearchPageComponents/BookCarousel'
 import BookList from '../components/bookSearchPageComponents/BookList'
 import { MenuProvider } from 'react-native-popup-menu'
+import { PaperProvider } from 'react-native-paper'
+
 
 export default function BookSearchPage() {
     
     return (
+      <PaperProvider>
       <MenuProvider>
     <SafeAreaView>
       <View>
@@ -22,6 +25,7 @@ export default function BookSearchPage() {
       </View>
     </SafeAreaView>
     </MenuProvider>
+    </PaperProvider>
   )
 }
 
