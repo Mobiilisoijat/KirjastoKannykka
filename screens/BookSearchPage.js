@@ -8,7 +8,7 @@ import { MenuProvider } from 'react-native-popup-menu'
 import { PaperProvider } from 'react-native-paper'
 
 
-export default function BookSearchPage() {
+export default function BookSearchPage({navigation}) {
     
     return (
       <PaperProvider>
@@ -21,7 +21,8 @@ export default function BookSearchPage() {
         <Button title="juu"></Button>
         <BookCarousel />
         <BookList />
-
+        <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')}>Testipage</Button>
+        <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()}>Log out</Button>
       </View>
     </SafeAreaView>
     </MenuProvider>
