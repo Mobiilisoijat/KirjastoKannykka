@@ -1,5 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { FIREBASE_AUTH } from './database/FirebaseConfig';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import LoginScreen from './screens/LoginScreen';
+import Testi from './screens/Testi';
+import LogoutTesti from './screens/LogoutTesti';
+
+const Stack = createNativeStackNavigator();
+
+const InsideStack = createNativeStackNavigator();
+
+function InsideLayout() {
+  return (
+    <InsideStack.Navigator>
+      <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
+      <InsideStack.Screen name="Testi" component={Testi} />
+    </InsideStack.Navigator>
+  );
+}
 import BookInfo from './screens/BookInfo';
 
 // fikka.5779724   Kurjet lentävät etelään , no image and no ratings, unknown roles
@@ -7,19 +26,23 @@ import BookInfo from './screens/BookInfo';
 // helmet.2254970 , english book. multiple locations
 
 export default function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setUser(user);
+    })
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <BookInfo bookId={"anders.1948617"}/>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        { user ? (
+          <Stack.Screen name="Inside" component={InsideLayout} options={{ headerShown: false }} />
+        ) : (
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
