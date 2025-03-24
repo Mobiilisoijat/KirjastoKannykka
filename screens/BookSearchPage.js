@@ -15,7 +15,7 @@ export default function BookSearchPage({navigation}) {
       <MenuProvider>
     <SafeAreaView>
       <View>
-        <TopAppSearchBar />
+        <TopAppSearchBar navigation={navigation} />
         <Text style={{color:"tomato"}}>BookSearchPage</Text>
 
         <Button title="juu"></Button>
