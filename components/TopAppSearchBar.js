@@ -1,60 +1,43 @@
-import { View, Text, StyleSheet,  } from 'react-native'
+import { View } from 'react-native'
 import React, { useReducer, useState, } from 'react'
-import { Searchbar,  PaperProvider, Button, IconButton } from 'react-native-paper'
+import { Searchbar, Button, Menu } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
-import { Menu, MenuOption, MenuOptions, MenuTrigger, triggerOnLongPress } from 'react-native-popup-menu'
 
-
-export default function TopAppSearchBar() {
+export default function TopAppSearchBar({ navigation }) {
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
 
-    const [visible, setVisible] = useState(true)  //show menu when menu-button is pressed
+    const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
 
-    const openMenu = () => {setVisible(true); console.log("menu opened")}
-    const closeMenu = () => {setVisible(false); console.log("closed")}
+    const openMenu = () => { setVisible(true); console.log("menu opened") }
+    const closeMenu = () => { setVisible(false); console.log("closed") }
 
-    return(
+    return (
         <View>
-        <Searchbar
-    
-        
-        placeholder={state.placeholder}
-        onChangeText={(text) => dispatch({type: 'search', text: text})}
-        value={state.text}
-        icon="menu"
-        onIconPress={triggerOnLongPress}
-        />
-        
-        <Menu>
-        <MenuTrigger />
-        <MenuOptions>
-            <MenuOption onSelect={() => alert("save")} text="save" />
-            <MenuOption onSelect={() => alert("del")} text="dell" /> 
-        </MenuOptions>
-        </Menu>
-
-        
-
-        
-
-        <PaperProvider>
-        <View style={{padding:50}}>        
-           
+            <Searchbar
+                placeholder={state.placeholder}
+                onChangeText={(text) => dispatch({ type: 'search', text: text })}
+                value={state.text}
+                icon="menu"
+                onIconPress={openMenu}
+            />
+            <Menu
+                visible={visible}
+                onDismiss={closeMenu}
+                anchor={<Button onPress={openMenu} disabled={true}></Button>}>
+                <Menu.Item onPress={() => { navigation.navigate('BookSearchPage'); closeMenu() }} title="Koti" />
+                <Menu.Item onPress={() => { navigation.navigate('BookInfo'); closeMenu() }} title="BookInfo Example" />
+                <Menu.Item onPress={() => { navigation.navigate('BooklistScreen'); closeMenu() }} title="Kirjalista" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Lue ISBN koodi" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Kaverit" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Viestit" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Menu item" />
+                <Menu.Item onPress={() => { closeMenu() }} leadingIcon="weather-sunny" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Profiili" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Käyttäjäpalaute" />
+                <Menu.Item onPress={() => { navigation.navigate(''); closeMenu() }} title="Asetukset" />
+            </Menu>
         </View>
-        </PaperProvider>
-        
-        </View>
-        
+
     )
 
 }
-
-/*
-<Menu
-visible={visible}
-onDismiss={closeMenu}
-anchor={<IconButton icon="menu" onPress={openMenu}>Show menu</IconButton>}>
-<Menu.Item onPress={() => {}} title="Item 1" />
-<Menu.Item onPress={() => {}} title="Item 2" />
-</Menu>
-*/
