@@ -14,7 +14,7 @@ function BottomBar() {
     }}
     >
       <Tab.Screen
-        name="Home"
+        name="BookSearchPage"
         component={BookSearchPage}
         options={{
           title: "Koti",
@@ -32,7 +32,7 @@ function BottomBar() {
         }}
       />
       <Tab.Screen
-        name="Profiili"
+        name="Profile"
         component={Testi}
         options={{
           title: "Profiili",
