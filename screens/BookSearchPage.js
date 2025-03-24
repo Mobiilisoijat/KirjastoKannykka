@@ -21,10 +21,11 @@ export default function BookSearchPage({navigation}) {
         <Button title="juu"></Button>
         <BookCarousel />
         <BookList />
-        <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')}>Testipage</Button>
+        <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')}/>
         <Button style={styles.button} mode='contained' title='BookInfo' onPress={() => navigation.navigate('BookInfo')}/>
-        <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('BooklistScreen')}>Testipage</Button>
-        <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()}>Log out</Button>
+        {/* BooklistScreen differs since navigation goes trought Tabs -> BooklistScreen */}
+        <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('Tabs', {screen: 'BooklistScreen', initial: false})}/>
+        <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()}/>
       </View>
     </SafeAreaView>
     </MenuProvider>
