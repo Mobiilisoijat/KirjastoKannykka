@@ -30,7 +30,8 @@ const LoginScreen = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
       const userData = {
-        email: user.email
+        email: user.email,
+        uid: user.uid
       }
       await setDoc(doc(FIREBASE_DB, 'users', user.uid), userData)
       console.log(user)

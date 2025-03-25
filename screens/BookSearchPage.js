@@ -6,6 +6,7 @@ import BookCarousel from '../components/bookSearchPageComponents/BookCarousel'
 import BookList from '../components/bookSearchPageComponents/BookList'
 import { MenuProvider } from 'react-native-popup-menu'
 import { PaperProvider } from 'react-native-paper'
+import { FIREBASE_AUTH } from '../firebase/Config'
 
 
 export default function BookSearchPage({navigation}) {
