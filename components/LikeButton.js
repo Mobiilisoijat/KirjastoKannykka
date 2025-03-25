@@ -1,6 +1,5 @@
-import { Pressable } from 'react-native';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
+import { Button } from 'react-native-paper';
 
 export default function LikeButton() {
   const [favourite, setFavourite] = useState(false) // we need to get this value from database
@@ -15,8 +14,12 @@ export default function LikeButton() {
   }
 
   return (
-    <Pressable onPress={favouriteHandler}>
-      <AntDesign name={favourite ? "heart" : "hearto"} size={32} color="black" />
-    </Pressable>
+    <Button
+      onPress={favouriteHandler}
+      icon={favourite ? "heart" : "heart-outline"}
+      contentStyle={{height: 50}}
+      labelStyle={{ fontSize: 30 }}
+      style={{height: 50}}
+    />
   );
 }
