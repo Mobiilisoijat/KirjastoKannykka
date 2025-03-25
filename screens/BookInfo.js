@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import AntDesign from '@expo/vector-icons/AntDesign';
 import ReadingListPopUp from "../components/ReadingListPopUp";
 import LikeButton from "../components/LikeButton";
 
-function BookInfo ({bookId}) {
+function BookInfo ({ route }) {
   const [bookInfo, setBookInfo] = useState(null)
   const [isPopUpVisible, setPopUpVisible] = useState(false)
-  bookId = "kronoby.85704" // for testing
+  const { bookId } = route.params
 
   const handlePopUp = () => {
     setPopUpVisible(!isPopUpVisible)
@@ -106,7 +107,10 @@ function BookInfo ({bookId}) {
           <TouchableOpacity
             onPress={handlePopUp}
           >
-            <Text>Lisää lukulistalle</Text>
+            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+              <Text>Lisää lukulistalle </Text>
+              <AntDesign name={"bars"}/>
+            </View>
           </TouchableOpacity>
           {isPopUpVisible && <ReadingListPopUp/>}
           {bookInfo.authors.map((person) => (

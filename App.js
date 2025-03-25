@@ -9,7 +9,7 @@ import LogoutTesti from './screens/LogoutTesti';
 import BookSearchPage from './screens/BookSearchPage';
 import BooklistScreen from './screens/BooklistScreen';
 import BookInfo from './screens/BookInfo';
-
+import BottomTab from './components/BottomBar';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,11 +18,14 @@ const InsideStack = createNativeStackNavigator();
 function InsideLayout() {
   return (
     <InsideStack.Navigator>
+      {/* Bottom navigator bar*/}
+      <InsideStack.Screen name="Tabs" component={BottomTab} options={{ headerShown: false }} />
+      {/* Other navigation paths*/}
       <InsideStack.Screen name="BookSearchPage" component={BookSearchPage} options={{ headerShown: false }} />
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Testi" component={Testi} />
       <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
-      <InsideStack.Screen name="BookInfo" component={BookInfo} />
+      <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "kronoby.85704"}}/>
     </InsideStack.Navigator>
   );
 }
@@ -52,3 +55,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export {InsideStack}
