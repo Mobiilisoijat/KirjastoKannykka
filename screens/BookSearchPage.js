@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Button } from 'react-native'
 import React from 'react'
+import { FIREBASE_AUTH } from '../firebase/Config'
 import TopAppSearchBar from '../components/TopAppSearchBar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import BookCarousel from '../components/bookSearchPageComponents/BookCarousel'
