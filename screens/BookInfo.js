@@ -112,7 +112,7 @@ function BookInfo ({ route }) {
               <AntDesign name={"bars"}/>
             </View>
           </TouchableOpacity>
-          {isPopUpVisible && <ReadingListPopUp/>}
+          {isPopUpVisible && <ReadingListPopUp bookId ={bookId} book={bookInfo}/>}
           {bookInfo.authors.map((person) => (
             <Text key={person.name}>{person.name} - {person.role || "Tuntematon rooli"}</Text>
           ))}
