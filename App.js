@@ -25,7 +25,7 @@ function InsideLayout() {
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Testi" component={Testi} />
       <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
-      <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "kronoby.85704"}}/>
+      <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "anders.1970703"}}/>
     </InsideStack.Navigator>
   );
 }

@@ -9,7 +9,7 @@ function ReadingListPopUp ({bookId, book}) {
   //Getting current user from firebase
   const auth = getAuth()
   const user = auth.currentUser
-  // we need to get status data from database 
+  // we need to get status data from database
   const checkBoxData = [
     {
       text: "Luettu",
@@ -33,12 +33,12 @@ function ReadingListPopUp ({bookId, book}) {
     console.log('Calls to database. We need to know if item is or is not in readinglist.');
     const checkBookState = async () => {
       console.log(user.uid)
-      //(Temp?)Checking if user is logged in 
+      //(Temp?)Checking if user is logged in
       if(user != null) {
         //Checking if book exists in user's firebase
         const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, bookId)
         const bookSnap = await getDoc(bookRef)
-  
+
         if(bookSnap.exists()) {
           const bookStatus = bookSnap.data().state
           console.log(bookSnap.data)
@@ -68,9 +68,9 @@ function ReadingListPopUp ({bookId, book}) {
         //Checking if book exists in user's firebase
         const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, bookId)
         const bookSnap = await getDoc(bookRef)
-  
+
         let newBookStatus = "default"
-  
+
         isSelected.map((checkbox, index) => {
           console.log(checkbox.status)
           if (checkbox.status) {
@@ -79,7 +79,7 @@ function ReadingListPopUp ({bookId, book}) {
             else if (index === 2) newBookStatus = "reading";
           }
         })
-  
+
         console.log(bookSnap.exists())
         console.log(`after switch ${newBookStatus}`)
         if(bookSnap.exists() && newBookStatus != "default") {
@@ -91,13 +91,14 @@ function ReadingListPopUp ({bookId, book}) {
           await deleteDoc(bookRef)
         } else {
           console.log("Book doesnt exist, adding to database")
-          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: book.images, score: 0, state: newBookStatus })
+          const image = book.images || null
+          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: image , score: 0, state: newBookStatus })
         }
       }
     }
     addToBooklist()
   }, [isSelected]);
-    
+
   function changeState(index) {
     //console.log(index)
     const newSelection = isSelected.map((checkboxObj, i) => {
