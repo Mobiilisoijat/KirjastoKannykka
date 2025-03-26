@@ -12,16 +12,18 @@ import SearchBookList from '../components/bookSearchPageComponents/SearchBookLis
 export default function BookSearchPage({ navigation }) {
 
   const [searchVisibility, setSearchVisibility] = useState(false)
+  const [bookListData, setBookListData] = useState({})
+  const bookUpdate = (object) => {
+    setBookListData(object.records)
+    console.log(bookListData)
+  }
   return (
     <PaperProvider>
       <MenuProvider>
         <SafeAreaView>
           <View>
-            <TopAppSearchBar navigation={navigation} />
-            <Text style={{ color: "tomato" }}>BookSearchPage</Text>
-
-            <Button title="juu" onPress={() => setSearchVisibility(!searchVisibility)}></Button>
-            {searchVisibility ? (
+            <TopAppSearchBar navigation={navigation} bookdata={bookUpdate} />
+            {!bookListData ? (
               <View>
                 <BookShowcaseCarousel />
                 <BookShowcaseList />
@@ -31,11 +33,7 @@ export default function BookSearchPage({ navigation }) {
                 <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false })} />
                 <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()} />
               </View>
-            ) : <SearchBookList data = {[
-              { id: 150, author: "J.K. Rowling", title: "Harry Potter", score: "7", state: "completed" },
-              { id: 56, author: "Jane Austen", title: "Pride and Prejudice", score: "8", state: "planning" },
-              { id: 57, author: "Markus Zusak", title: "The Book Thief", score: "9", state: "completed" },
-            ]}/>
+            ) : <SearchBookList navigation={navigation} data={bookListData}/>
             }
           </View>
         </SafeAreaView>

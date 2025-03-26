@@ -10,9 +10,6 @@ const SearchBarReducer = (state,action) => {    // Use for other features than j
             return {...state, search: action.text}
         case 'placeholder':
             return {...state, placeholder: action.placeholderText}
-        case 'setBooks':
-            return {...state, data: action.searchResults}
-
         default:
             throw new Error("SearchBarReducer Error") //Change later to middleware handling
     }

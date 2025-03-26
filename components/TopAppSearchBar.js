@@ -1,9 +1,9 @@
 import { View } from 'react-native'
-import React, { useReducer, useRef, useState, } from 'react'
+import React, { useEffect, useReducer, useRef, useState, } from 'react'
 import { Searchbar, Button, Menu } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
 
-const TopAppSearchBar = ({ navigation }) => {
+const TopAppSearchBar = ({ navigation, bookdata }) => {
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
 
@@ -13,7 +13,6 @@ const TopAppSearchBar = ({ navigation }) => {
     const closeMenu = () => { setVisible(false); console.log("closed") }
 
     const [list, setList] = useState({})
-
     const searchBooks = (text) => {
         dispatch({ type: 'search', text: text })
 
@@ -22,17 +21,22 @@ const TopAppSearchBar = ({ navigation }) => {
         }
         controllerRef.current = new AbortController()
         const signal = controllerRef.current.signal
-
-        const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search}&type=AllFields&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
-        fetch(searchURL, {signal})
-        .then(response => response.json())
-        .then((json) => {
-            
-            setList(json)
-            console.log(list)
-        }).catch((error) => {
-            console.log(error)
-        })
+        if(state.search.length > 1){
+            const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search}&type=AllFields&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
+            fetch(searchURL, {signal})
+            .then(response => response.json())
+            .then((json) => {
+                
+                setList(json)
+                
+                bookdata(list)
+            }).catch((error) => {
+                console.log(error)
+            })
+        } else {
+            bookdata({})
+        }
+        
     }
 
     return (
