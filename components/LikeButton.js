@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from 'react-native-paper';
-import { USERS, FIREBASE_DB, FAVOURITES } from '../firebase/Config';
+import { USERS, FIREBASE_DB, FAVORITES } from '../firebase/Config';
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth'
 
@@ -13,7 +13,7 @@ export default function LikeButton( { bookId, bookInfo } ) {
 
   // check if user is logged in
   if (user && user.uid){
-    docRef = doc(FIREBASE_DB, USERS, user.uid, FAVOURITES, bookId)
+    docRef = doc(FIREBASE_DB, USERS, user.uid, FAVORITES, bookId)
   }
 
   const firebaseDataGet = async () => {
@@ -62,7 +62,7 @@ export default function LikeButton( { bookId, bookInfo } ) {
         firebaseDataAdd()
       }
     } else {
-      // use this in the future to have some effect for non registered users. ex. popup "Make an account to add to favourites!"
+      // use this in the future to have some effect for non registered users. ex. popup "Make an account to add to favorites!"
       // ex, use react native paper - Dialog component
       console.log("Make an account!")
     }

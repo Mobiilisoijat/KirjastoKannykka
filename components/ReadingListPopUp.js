@@ -91,7 +91,8 @@ function ReadingListPopUp ({bookId, book}) {
           await deleteDoc(bookRef)
         } else {
           console.log("Book doesnt exist, adding to database")
-          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: book.images, score: 0, state: newBookStatus })
+          const image = book.images || null
+          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: image , score: 0, state: newBookStatus })
         }
       }
     }
