@@ -55,7 +55,6 @@ function BookInfo ({ route }) {
 
       const values = {bookTitle, year, rating, languages, images, authors, libraryOrganisation, libraryRegion, library, formats }
       setBookInfo(values)
-      console.log(bookInfo.images)
     } catch (error) {
       console.log(error)
     }
@@ -112,7 +111,7 @@ function BookInfo ({ route }) {
                 :
                 <Text>Ei vielä arvosteluja</Text>
               }
-              <LikeButton/>
+              <LikeButton bookId={bookId}/>
             </View>
           </View>
           {
@@ -122,6 +121,7 @@ function BookInfo ({ route }) {
             */
           }
           <Button
+            mode="contained"
             onPress={handlePopUp}
             icon={'menu'}
             contentStyle={{ flexDirection: 'row-reverse' }}
