@@ -12,7 +12,7 @@ const TopAppSearchBar = ({ navigation }) => {
     const openMenu = () => { setVisible(true); console.log("menu opened") }
     const closeMenu = () => { setVisible(false); console.log("closed") }
 
-    
+    const [list, setList] = useState({})
 
     const searchBooks = (text) => {
         dispatch({ type: 'search', text: text })
@@ -27,8 +27,9 @@ const TopAppSearchBar = ({ navigation }) => {
         fetch(searchURL, {signal})
         .then(response => response.json())
         .then((json) => {
-            console.log(json.records[0])
-            console.log(searchURL)
+            
+            setList(json)
+            console.log(list)
         }).catch((error) => {
             console.log(error)
         })
@@ -39,7 +40,7 @@ const TopAppSearchBar = ({ navigation }) => {
             <Searchbar
                 placeholder={state.placeholder}
                 onChangeText={(text) => searchBooks(text)}
-                value={state.text}
+                value={state.search}
                 icon="menu"
                 onIconPress={openMenu}
             />
