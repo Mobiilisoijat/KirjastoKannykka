@@ -24,10 +24,10 @@ function BookInfo ({ route }) {
       const response = await fetch(`https://api.finna.fi/v1/record?id=${bookId}`)
       const json = await response.json()
       // easy to get
-      const bookTitle = json.records[0].title || "Not available"
+      const bookTitle = json.records[0].title || "Ei saatavilla"
       const rating = json.records[0].rating || 0
       const year = json.records[0].year
-      let languages = json.records[0].languages || "Not available"
+      let languages = json.records[0].languages || "Ei saatavilla"
       languages = languages.join(", ")
       const images = json.records[0].images[0] // we use only the first picture
       // need to dig
@@ -111,7 +111,7 @@ function BookInfo ({ route }) {
                 :
                 <Text>Ei vielä arvosteluja</Text>
               }
-              <LikeButton bookId={bookId}/>
+              <LikeButton bookId={bookId} bookInfo={bookInfo}/>
             </View>
           </View>
           {
