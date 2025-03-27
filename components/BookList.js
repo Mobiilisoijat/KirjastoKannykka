@@ -4,12 +4,15 @@ import BooklistItem from '../components/BooklistItem'
 import { FIREBASE_DB, BOOKLIST, USERS, USERID } from '../firebase/Config'
 import { v4 as uuidv4 } from "uuid"
 import { doc, addDoc, collection, deleteDoc, onSnapshot, query, setDoc } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 import { Button } from 'react-native-paper'
 
 const BookList = ({toggleState, textInput}) => {
   const [currentList, setCurrentList] = useState([]) //Data from firebase
   const [filteredList, setFilteredList] = useState ([])
-  
+  const auth = getAuth()
+  const user = auth.currentUser
+
   const testList = ([
     { id: 150, author: "J.K. Rowling", title: "Harry Potter", score: "7", state: "completed" },
     { id: 52, author: "George Orwell", title: "1984", score: "9", state: "reading" },
@@ -45,9 +48,9 @@ const BookList = ({toggleState, textInput}) => {
         await save(); // Wait for save() to complete
       };
     saveTEST()
-    
+
     //get users booklist data from firebase
-    const queryRef = query(collection(FIREBASE_DB, USERS, USERID, BOOKLIST))
+    const queryRef = query(collection(FIREBASE_DB, USERS, user.uid, BOOKLIST))
     const unsubscribeSnapshot = onSnapshot(queryRef, (querySnapshot) => {
         const booklist = []
         querySnapshot.forEach((doc) => {
@@ -58,13 +61,13 @@ const BookList = ({toggleState, textInput}) => {
     return () => {
         unsubscribeSnapshot()
     }
-  }, [])  
+  }, [])
 
   const save = async () => {
     try {
     for (const book of testList) {
-        const bookRef = doc(FIREBASE_DB, USERS, USERID, BOOKLIST, String(book.id));
-        await setDoc(bookRef, { title: book.title, author: book.author, score: book.score, state: book.state });
+        const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, String(book.id))
+        await setDoc(bookRef, { title: book.title, author: book.author[0].name, score: book.score, state: book.state })
     }
     } catch (error) {
         console.error("ERROR SAVING BOOK, error")
@@ -124,7 +127,7 @@ const BookList = ({toggleState, textInput}) => {
         />
         )}
     />
-       
+
   )
 }
 

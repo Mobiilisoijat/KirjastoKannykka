@@ -8,7 +8,7 @@ const BooklistItem = ({item}) => {
     >
         <View style={{flex: 1}}>
         <Text style={{fontSize: 18}}>{item.title}</Text>
-        <Text style={{fontSize: 14}}>{item.author}</Text>
+        <Text style={{fontSize: 14}}>{item.author[0].name}</Text>
         </View>
         <Text style={{fontSize: 20}}>{item.score}</Text>
         <Pressable>

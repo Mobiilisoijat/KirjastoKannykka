@@ -7,6 +7,7 @@ import BookShowcaseList from '../components/bookSearchPageComponents/BookShowcas
 import { MenuProvider } from 'react-native-popup-menu'
 import { PaperProvider } from 'react-native-paper'
 import SearchBookList from '../components/bookSearchPageComponents/SearchBookList'
+import { FIREBASE_AUTH } from '../firebase/Config'
 
 
 export default function BookSearchPage({ navigation }) {

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { View, Text, Image, ScrollView } from "react-native";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import ReadingListPopUp from "../components/ReadingListPopUp";
 import LikeButton from "../components/LikeButton";
+import { Button } from "react-native-paper";
 
 function BookInfo ({ route }) {
   const [bookInfo, setBookInfo] = useState(null)
@@ -15,7 +16,7 @@ function BookInfo ({ route }) {
 
   useEffect(() => {
     getBookInfo(bookId)
-  })
+  },[])
 
   const getBookInfo = async (bookId) => {
     try {
@@ -23,10 +24,10 @@ function BookInfo ({ route }) {
       const response = await fetch(`https://api.finna.fi/v1/record?id=${bookId}`)
       const json = await response.json()
       // easy to get
-      const bookTitle = json.records[0].title || "Not available"
+      const bookTitle = json.records[0].title || "Ei saatavilla"
       const rating = json.records[0].rating || 0
       const year = json.records[0].year
-      let languages = json.records[0].languages || "Not available"
+      let languages = json.records[0].languages || "Ei saatavilla"
       languages = languages.join(", ")
       const images = json.records[0].images[0] // we use only the first picture
       // need to dig
@@ -60,13 +61,14 @@ function BookInfo ({ route }) {
   }
 
   return(
-    <View>
+    <ScrollView>
       {bookInfo && (
         <View style={{alignItems: "center"}}>
           <Text>{bookInfo.bookTitle}</Text>
           <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
             {
-              bookInfo.images && (
+              bookInfo.images
+              ? (
                 <Image
                 style={{
                   height: 299,
@@ -77,6 +79,20 @@ function BookInfo ({ route }) {
                   uri: `https://api.finna.fi${bookInfo.images}`
                 }}
                 />
+              )
+              :
+              (
+                <View
+                  style={{
+                    height: 299,
+                    width: 200,
+                    backgroundColor: "#b5b5b5",
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <MaterialCommunityIcons name="block-helper" size={64}/>
+                </View>
               )
             }
             <View style={{alignItems: "center"}}>
@@ -95,7 +111,7 @@ function BookInfo ({ route }) {
                 :
                 <Text>Ei vielä arvosteluja</Text>
               }
-              <LikeButton/>
+              <LikeButton bookId={bookId} bookInfo={bookInfo}/>
             </View>
           </View>
           {
@@ -104,15 +120,15 @@ function BookInfo ({ route }) {
             <Text>{bookInfo.languages}</Text>
             */
           }
-          <TouchableOpacity
+          <Button
+            mode="contained"
             onPress={handlePopUp}
+            icon={'menu'}
+            contentStyle={{ flexDirection: 'row-reverse' }}
           >
-            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-              <Text>Lisää lukulistalle </Text>
-              <AntDesign name={"bars"}/>
-            </View>
-          </TouchableOpacity>
-          {isPopUpVisible && <ReadingListPopUp/>}
+            Lisää lukulistalle
+          </Button>
+          {isPopUpVisible && <ReadingListPopUp bookId={bookId} book={bookInfo}/>}
           {bookInfo.authors.map((person) => (
             <Text key={person.name}>{person.name} - {person.role || "Tuntematon rooli"}</Text>
           ))}
@@ -152,7 +168,7 @@ function BookInfo ({ route }) {
           )}
         </View>
       )}
-    </View>
+    </ScrollView>
   )
 }
 

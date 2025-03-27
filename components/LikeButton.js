@@ -1,22 +1,80 @@
-import { Pressable } from 'react-native';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
+import { Button } from 'react-native-paper';
+import { USERS, FIREBASE_DB, FAVORITES } from '../firebase/Config';
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { getAuth } from 'firebase/auth'
 
-export default function LikeButton() {
-  const [favourite, setFavourite] = useState(false) // we need to get this value from database
+export default function LikeButton( { bookId, bookInfo } ) {
+  const [favourite, setFavourite] = useState(false)
+
+  const auth = getAuth()
+  const user = auth.currentUser
+  let docRef
+
+  // check if user is logged in
+  if (user && user.uid){
+    docRef = doc(FIREBASE_DB, USERS, user.uid, FAVORITES, bookId)
+  }
+
+  const firebaseDataGet = async () => {
+    if (user.uid) {
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const isLiked = docSnap.data().liked
+        if (isLiked === true) {
+          setFavourite(isLiked)
+        }
+        //console.log("Document data:", docSnap.data());
+      } else {
+        console.log("No such document!");
+      }
+    } else {
+      console.log("No uid")
+    }
+  }
+
+  const firebaseDataAdd = async () => {
+    await setDoc(docRef, {
+      author: bookInfo.authors,
+      coverPath: bookInfo.images || null,
+      liked: true,
+      title: bookInfo.bookTitle,
+    })
+    console.log('add favourite')
+  }
+
+  const firebaseDataDelete = async () => {
+    await deleteDoc(docRef)
+    console.log('delete favourite')
+  }
 
   useEffect(() => {
-    console.log('Calls to database. We need to know if item is in favourites.');
+    firebaseDataGet()
   }, []);
 
   const favouriteHandler = () => {
-    // set value also into to the database
-    setFavourite((favourite) => !favourite)
+    // check if user is authorized
+    if (user) {
+      setFavourite((favourite) => !favourite)
+      if (favourite === true) {
+        firebaseDataDelete()
+      } else {
+        firebaseDataAdd()
+      }
+    } else {
+      // use this in the future to have some effect for non registered users. ex. popup "Make an account to add to favorites!"
+      // ex, use react native paper - Dialog component
+      console.log("Make an account!")
+    }
   }
 
   return (
-    <Pressable onPress={favouriteHandler}>
-      <AntDesign name={favourite ? "heart" : "hearto"} size={32} color="black" />
-    </Pressable>
+    <Button
+      onPress={favouriteHandler}
+      icon={favourite ? "heart" : "heart-outline"}
+      contentStyle={{height: 50}}
+      labelStyle={{ fontSize: 30 }}
+      style={{height: 50}}
+    />
   );
 }
