@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native'
 import React from 'react'
+import uuid from 'react-native-uuid'
 
 const SearchBookListItem = ({ navigation, item }) => {
   return (
@@ -18,7 +19,7 @@ const SearchBookListItem = ({ navigation, item }) => {
         )}
         <Text numberOfLines={3}>{item.title}</Text>
         {item.nonPresenterAuthors.map((person) => (
-          <Text ellipsizeMode='head' numberOfLines={3}>{person.name} - {person.role || "Tuntematon rooli"}</Text>
+          <Text ellipsizeMode='head' key={uuid.v4()}  numberOfLines={3}>{person.name} - {person.role || "Tuntematon rooli"}</Text>
         ))}
         
       </View>

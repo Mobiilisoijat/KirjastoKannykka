@@ -9,7 +9,7 @@ const SearchBookList = ({navigation, data}) => {
         <Text style={styles.header}>Hakutulokset</Text>
       <FlatList
       data = {data}
-      keyExtractor={item => {item.id.toString(); console.log(data)}}
+      keyExtractor={item => {item.id}}
       renderItem={({item}) => (
       <SearchBookListItem navigation={navigation} item={item}/>
     )}
