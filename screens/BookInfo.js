@@ -3,12 +3,17 @@ import { View, Text, Image, ScrollView } from "react-native";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import ReadingListPopUp from "../components/ReadingListPopUp";
 import LikeButton from "../components/LikeButton";
-import { Button } from "react-native-paper";
+import { Button, PaperProvider } from "react-native-paper";
+import BookReview from "../components/BookReview";
+import { getAuth } from "firebase/auth";
 
 function BookInfo ({ route }) {
   const [bookInfo, setBookInfo] = useState(null)
   const [isPopUpVisible, setPopUpVisible] = useState(false)
   const { bookId } = route.params
+
+  const auth = getAuth()
+  const user = auth.currentUser
 
   const handlePopUp = () => {
     setPopUpVisible(!isPopUpVisible)
@@ -26,10 +31,10 @@ function BookInfo ({ route }) {
       // easy to get
       const bookTitle = json.records[0].title || "Ei saatavilla"
       const rating = json.records[0].rating || 0
-      const year = json.records[0].year
+      const year = json.records[0].year || null
       let languages = json.records[0].languages || "Ei saatavilla"
       languages = languages.join(", ")
-      const images = json.records[0].images[0] // we use only the first picture
+      const images = json.records[0].images[0] || null // we use only the first picture
       // need to dig
       const buildings = json.records[0].buildings
       const authors = json.records[0].nonPresenterAuthors
@@ -166,6 +171,9 @@ function BookInfo ({ route }) {
               </View>
             </View>
           )}
+        <PaperProvider>
+          <BookReview userName={user.uid} bookId={bookId}/>
+        </PaperProvider>
         </View>
       )}
     </ScrollView>
