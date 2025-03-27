@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { PaperProvider, Text, Avatar, TextInput, Button } from "react-native-paper";
+import { PaperProvider, Text, Avatar, TextInput, Button, Divider } from "react-native-paper";
 import { BOOKREVIEWS, REVIEW, FIREBASE_DB  } from '../firebase/Config';
 import { getAuth } from 'firebase/auth'
-import { doc, getDoc, query, setDoc, collection, getDocs, orderBy, where  } from "firebase/firestore";
+import { doc, getDoc, query, setDoc, collection, getDocs, orderBy, where, updateDoc } from "firebase/firestore";
 import { View } from "react-native";
 import ReviewDialog from "./ReviewDialog";
 
-function BookReview( { userName, bookId } ) {
+function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateData } ) {
   const [text, setText] = useState("")
   const [comments, setComments] = useState([])
 
@@ -15,8 +15,14 @@ function BookReview( { userName, bookId } ) {
   let docRef
 
   useEffect(() => {
-    getComments()
-  },[])
+    console.log("updateData changed:", updateData);
+    if (!updateData) {
+      getComments()
+      console.log("A")
+    } else {
+      postCo()
+    }
+  }, [updateData]);
 
   // check if user is logged in
   if (user && user.uid){
@@ -33,9 +39,6 @@ function BookReview( { userName, bookId } ) {
         querySnapshot.forEach((doc) => {
           tempComments.push({...doc.data()})
         })
-        tempComments.forEach(i => {
-          console.log("tempComments",i)
-        })
         setComments(tempComments)
       } catch (error) {
         console.log(error)
@@ -47,7 +50,6 @@ function BookReview( { userName, bookId } ) {
     if (text.length > 0 && user) {
       try {
         const docSnap = await getDoc(docRef);
-        console.log(docSnap.data())
         if (!docSnap.data()) {
           await setDoc(docRef, {
             userName: userName,
@@ -56,10 +58,14 @@ function BookReview( { userName, bookId } ) {
           })
           console.log("review posted")
           setText("")
-          getComments()
+          await getComments()
         } else {
-          // make a system that checks if user already has a comment and wants to update it
+          // checks if user has already posted a comment on current book and asks if he wants to overwrite it or cancel
           console.log("You already have a review about this book")
+          // this setAlertVisible triggers setUpdateData(true) inside Reviewdialog.js
+          // inside useEffect we post the comment after we have gotten updateData = true
+          // we need to do stupid ̶S̶H̶I̶T stuff like this, since there is a delay in updating the data
+          setAlertVisible(true)
         }
       } catch (error) {
         console.log(error)
@@ -69,19 +75,32 @@ function BookReview( { userName, bookId } ) {
     }
   }
 
-  return(
+  const postCo = async () => {
+    if (updateData) {
+      console.log("posting")
+      await updateDoc(docRef, {
+        comment: text
+      })
+      console.log("posted")
+      setUpdateData(false)
+      setText("")
+    }
+  }
 
+  return(
+    // !!!!!!!!!!!!! lisää aika milloin arvostelu kirjoitettiin
     <PaperProvider >
       {comments &&
         (
           comments.map((doc) => (
-            <View key={doc.userName}>
+            <View style={{paddingTop: 8, paddingBottom: 8}} key={doc.userName}>
               <View style={{display: "flex", flexDirection: "row"}}>
                 <Avatar.Icon size={24} icon="folder"/>
                 <Text>{doc.userName}</Text>
-                <Text>{doc.rating}</Text>
+                <Text> {doc.rating}</Text>
               </View>
               <Text>{doc.comment}</Text>
+              <Divider bold={true}/>
             </View>
           ))
         )

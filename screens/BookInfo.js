@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, Text, Image, ScrollView } from "react-native";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import ReadingListPopUp from "../components/ReadingListPopUp";
 import LikeButton from "../components/LikeButton";
-import { Button, PaperProvider } from "react-native-paper";
+import { Button, PaperProvider, Provider } from "react-native-paper";
 import BookReview from "../components/BookReview";
 import { getAuth } from "firebase/auth";
+import ReviewDialog from "../components/ReviewDialog";
 
 function BookInfo ({ route }) {
   const [bookInfo, setBookInfo] = useState(null)
   const [isPopUpVisible, setPopUpVisible] = useState(false)
+  const [isAlertVisible, setAlertVisible] = useState(false);
+  const [updateData, setUpdateData] = useState(false)
   const { bookId } = route.params
 
   const auth = getAuth()
@@ -21,7 +24,7 @@ function BookInfo ({ route }) {
 
   useEffect(() => {
     getBookInfo(bookId)
-  },[])
+  },[updateData])
 
   const getBookInfo = async (bookId) => {
     try {
@@ -66,9 +69,15 @@ function BookInfo ({ route }) {
   }
 
   return(
+    <PaperProvider>
+
     <ScrollView>
       {bookInfo && (
         <View style={{alignItems: "center"}}>
+          {isAlertVisible && (
+            <ReviewDialog isAlertVisible={isAlertVisible} setAlertVisible={setAlertVisible} setUpdateData={setUpdateData}/>
+          )
+        }
           <Text>{bookInfo.bookTitle}</Text>
           <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
             {
@@ -88,13 +97,13 @@ function BookInfo ({ route }) {
               :
               (
                 <View
-                  style={{
-                    height: 299,
-                    width: 200,
-                    backgroundColor: "#b5b5b5",
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
+                style={{
+                  height: 299,
+                  width: 200,
+                  backgroundColor: "#b5b5b5",
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
                 >
                   <MaterialCommunityIcons name="block-helper" size={64}/>
                 </View>
@@ -130,7 +139,7 @@ function BookInfo ({ route }) {
             onPress={handlePopUp}
             icon={'menu'}
             contentStyle={{ flexDirection: 'row-reverse' }}
-          >
+            >
             Lisää lukulistalle
           </Button>
           {isPopUpVisible && <ReadingListPopUp bookId={bookId} book={bookInfo}/>}
@@ -167,16 +176,17 @@ function BookInfo ({ route }) {
                   //console.log(buildings)
                   return <Text style={{marginHorizontal: 12}} key={buildings.value}>{buildings.translated}</Text>
                 }
-                )}
+              )}
               </View>
             </View>
           )}
         <PaperProvider>
-          <BookReview userName={user.uid} bookId={bookId}/>
+          <BookReview userName={user.uid} bookId={bookId} setAlertVisible={setAlertVisible} setUpdateData={setUpdateData} updateData={updateData}/>
         </PaperProvider>
         </View>
       )}
     </ScrollView>
+      </PaperProvider>
   )
 }
 

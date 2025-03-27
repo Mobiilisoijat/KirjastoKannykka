@@ -1,14 +1,38 @@
-import { Dialog, Portal, Text } from "react-native-paper";
-import { useState } from "react";
-const ReviewDialog = () => {
-  const [visible, setVisible] = useState(true); // Make it visible by default
+import { Button, Dialog, IconButton, Portal, Text } from "react-native-paper";
+import { useState, useEffect } from "react";
+import { View } from "react-native";
 
+const ReviewDialog = ({ isAlertVisible, setAlertVisible, setUpdateData }) => {
   return(
     <Portal>
-      <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-        <Dialog.Title>Idiot</Dialog.Title>
+      <Dialog visible={isAlertVisible} onDismiss={() => setAlertVisible(false)}>
+        <View style={{display: "flex", flexDirection: "row", justifyContent: 'space-between'}}>
+          <Dialog.Title>Huomautus</Dialog.Title>
+          <IconButton
+            icon={'close-thick'}
+            onPress={() => setAlertVisible(false)}
+          />
+        </View>
         <Dialog.Content>
-          <Text>Thanks for nothing</Text>
+          <Text>Sinulla on jo arvostelu tästä kirjasta.</Text>
+          <Text>Haluatko korvata vanhan arvostelun tällä uudella arvostelulla?</Text>
+          <Button
+            mode="contained"
+            style={{margin: 4}}
+            onPress={() => {
+              setUpdateData(true)
+              setAlertVisible(false)
+            }}
+          >
+            Kyllä
+          </Button>
+          <Button
+            mode="contained"
+            style={{margin: 4}}
+            onPress={() => setAlertVisible(false)}
+          >
+            En
+          </Button>
         </Dialog.Content>
       </Dialog>
     </Portal>
