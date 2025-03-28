@@ -1,6 +1,7 @@
 const initialState = {
     search: '',
-    placeholder: 'Etsi kirjoja'
+    placeholder: 'Etsi kirjoja',
+    data: {}
 }
 
 const SearchBarReducer = (state,action) => {    // Use for other features than just search?
@@ -9,7 +10,6 @@ const SearchBarReducer = (state,action) => {    // Use for other features than j
             return {...state, search: action.text}
         case 'placeholder':
             return {...state, placeholder: action.placeholderText}
-
         default:
             throw new Error("SearchBarReducer Error") //Change later to middleware handling
     }
