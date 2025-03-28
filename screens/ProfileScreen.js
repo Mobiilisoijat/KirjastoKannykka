@@ -1,19 +1,17 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Avatar, Button } from 'react-native-paper';
-import { getAuth } from 'firebase/auth'
+import { Avatar, Button, Modal, TextInput } from 'react-native-paper';
+import { getAuth, updateProfile } from 'firebase/auth'
 import ChangeUsernamePopUp from '../components/ChangeUsernamePopUp'
 
 export default function ProfileScreen() {
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const [visible, setVisible] = useState(false)
   const [username, setUsername] = useState('no username')
   const [pfp, setPfp] = useState('https://github-production-user-asset-6210df.s3.amazonaws.com/72543424/426615926-ba944629-d763-4e80-a6e3-f77c2ed97e1b.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250325%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250325T155748Z&X-Amz-Expires=300&X-Amz-Signature=314b140fab09845049fe22effed6e9584abefc2cd43979e8a7fa2e0eb28561ae&X-Amz-SignedHeaders=host');
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
     if (user.displayName) {
       setUsername(user.displayName)
     } else {
@@ -28,15 +26,34 @@ export default function ProfileScreen() {
   }, [])
 
   const changeUsername = () => {
-    //TODO
+    setVisible(!visible)
+    updateProfile(user, {displayName: username})
+    .then(() => {
+      console.log('Username updated successfully')
+    }).catch((error) => {
+      console.log('Error updating username: ', error)
+    })
   }
 
   return (
     <View style={styles.container}>
       <Avatar.Image size={150} source={{uri:pfp}}/>
       <Text>{username}</Text>
-      <Button style={styles.button} mode='contained' title='Change username' onPress={() => showModal()}>Change username</Button>
-      {visible ? <ChangeUsernamePopUp hideModal={() => hideModal}/> : null}
+      <Button style={styles.button} mode='contained' title='Change username' onPress={() => setVisible(true)}>Change username</Button>
+      <Button style={styles.button} mode='contained' title='Change username' onPress={() => showModal()}>Change profile picture</Button>
+      <Modal
+        style={styles.modalView}
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={() => {
+          setVisible(!visible);
+        }}>
+        <View style={styles.container}>
+          <TextInput style={styles.input} value={username} placeholder='New username' autoCapitalize='none' onChangeText={(text) => setUsername(text)} />
+          <Button style={styles.button} mode='contained' title='Change username' onPress={() => changeUsername()}>Change username</Button>
+        </View>
+        </Modal>
     </View>
   )
 }
@@ -56,5 +73,23 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 4,
+  },
+  modalView: {
+    margin: 20,
+    flex: 1,
+    justifyContent: 'center',
+    height: 200,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   }
 })
