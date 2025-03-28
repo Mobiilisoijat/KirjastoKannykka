@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 
-const BookCarousel = () => {
+const BookShowcaseCarousel = () => {
   return (
     <View style={styles.container}>
       <Text style={{color: "yellow"}}>BookCarousel</Text>
@@ -14,4 +14,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default BookCarousel
+export default BookShowcaseCarousel
