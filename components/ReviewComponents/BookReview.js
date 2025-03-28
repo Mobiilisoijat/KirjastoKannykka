@@ -29,18 +29,16 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
   }
 
   const getComments = async () => {
-    if (user && user.uid) {
-      try {
-        const q = query(collection(FIREBASE_DB, BOOKREVIEWS, bookId, "review"), orderBy("time", "desc"))
-        const querySnapshot = await getDocs(q)
-        const tempComments = []
-        querySnapshot.forEach((doc) => {
-          tempComments.push({...doc.data()})
-        })
-        setComments(tempComments)
-      } catch (error) {
-        console.log(error)
-      }
+    try {
+      const q = query(collection(FIREBASE_DB, BOOKREVIEWS, bookId, "review"), orderBy("time", "desc"))
+      const querySnapshot = await getDocs(q)
+      const tempComments = []
+      querySnapshot.forEach((doc) => {
+        tempComments.push({...doc.data()})
+      })
+      setComments(tempComments)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -120,6 +118,7 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
         )
       }
       <Text style={{paddingTop: 8, paddingBottom: 8, fontSize: 16}}>Kirjoita arvostelu</Text>
+      {!user && <Text>Kirjaudu jättääksesi arvostelu!</Text>}
       <View style={{display: "flex", flexDirection: "row"}}>
         <Avatar.Icon size={24} icon="folder"/>
         <Text>{userName}</Text>
