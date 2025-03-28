@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
 import Checkbox from "expo-checkbox";
 import { FIREBASE_DB, BOOKLIST, USERS } from '../firebase/Config'
 import { getAuth } from 'firebase/auth'
@@ -26,6 +26,7 @@ function ReadingListPopUp ({bookId, book}) {
   ]
 
   const [isSelected, setSelection] = useState(checkBoxData);
+  const [score, setScore] = useState(book.score ? String(book.score) : "0")
 
   const isSelectedMounted = useRef(false)
 
@@ -49,6 +50,9 @@ function ReadingListPopUp ({bookId, book}) {
           } else if (bookStatus === "reading"){
             changeState(2)
           }
+        }
+        if(bookSnap.data().score !== undefined) {
+          setScore(String(bookSnap.data().score));
         }
       }
     }
@@ -116,6 +120,13 @@ function ReadingListPopUp ({bookId, book}) {
     setSelection(newSelection)
   }
 
+  const saveScore = async () => {
+    if (user != null) {
+      const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, bookId);
+      await updateDoc(bookRef, { score: parseInt(score, 10) });
+    }
+  };
+
   return(
     <View>
       {isSelected.map((checkboxObj, index) => {
@@ -128,9 +139,22 @@ function ReadingListPopUp ({bookId, book}) {
             value={checkboxObj.status}
             onValueChange={() => changeState(index)}
           />
+
         </View>
         )
       })}
+      <View style={{ padding: 4 }}>
+        <Text>Score:</Text>
+        <TextInput
+          value={score}
+          onChangeText={setScore}
+          keyboardType="numeric"
+          style={{ borderWidth: 1, padding: 4, width: 80 }}
+        />
+        <Pressable style={{ padding: 4 }} onPress={saveScore}>
+          <Text>Save</Text>
+        </Pressable>
+      </View>
     </View>
   )
 }

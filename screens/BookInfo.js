@@ -111,7 +111,7 @@ function BookInfo ({ route }) {
                 :
                 <Text>Ei vielä arvosteluja</Text>
               }
-              <LikeButton bookId={bookId} bookInfo={bookInfo}/>
+              {/*<LikeButton bookId={bookId} bookInfo={bookInfo}/>*/}
             </View>
           </View>
           {
