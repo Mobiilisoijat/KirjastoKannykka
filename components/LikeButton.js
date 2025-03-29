@@ -34,18 +34,26 @@ export default function LikeButton( { bookId, bookInfo } ) {
   }
 
   const firebaseDataAdd = async () => {
-    await setDoc(docRef, {
-      author: bookInfo.authors,
-      coverPath: bookInfo.images || null,
-      liked: true,
-      title: bookInfo.bookTitle,
-    })
-    console.log('add favourite')
+    try {
+      await setDoc(docRef, {
+        author: bookInfo.authors,
+        coverPath: bookInfo.images || null,
+        liked: true,
+        title: bookInfo.bookTitle,
+      })
+      console.log('add favourite')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const firebaseDataDelete = async () => {
-    await deleteDoc(docRef)
-    console.log('delete favourite')
+    try {
+      await deleteDoc(docRef)
+      console.log('delete favourite')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
