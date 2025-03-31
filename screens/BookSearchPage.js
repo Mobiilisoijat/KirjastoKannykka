@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { TopAppSearchBar } from '../components/TopAppSearchBar'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -11,7 +11,8 @@ import { FIREBASE_AUTH } from '../firebase/Config'
 
 
 export default function BookSearchPage({ navigation }) {
-
+  const TESTURL = "https://api.finna.fi/api/v1/search?lookfor=harri_po&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi"
+  const URL = "https://api.finna.fi/v1/search?page=1&filter[]=~format:%220/Book/%22&limit=5"
   const [searchVisibility, setSearchVisibility] = useState(false)
   const [bookListData, setBookListData] = useState({})
   const [showcaseData, setShowcaseData] = useState({})
@@ -20,7 +21,7 @@ export default function BookSearchPage({ navigation }) {
     console.log(bookListData)
   }
   useEffect(() => {
-    fetch('https://api.finna.fi/api/v1/search?lookfor=harry_potter&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=10&prettyPrint=false&lng=fi')
+    fetch(TESTURL)
     .then(response => response.json())
     .then((json) => {
       setShowcaseData(json.records)
@@ -38,13 +39,13 @@ export default function BookSearchPage({ navigation }) {
             <TopAppSearchBar navigation={navigation} bookdata={bookUpdate} />
             {!bookListData ? (
               <View>
-                <BookShowcaseCarousel data={showcaseData}/>
+                <BookShowcaseCarousel navigation={navigation} data={showcaseData}/>
                 <BookShowcaseList />
-                <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')} />
+                {/* <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')} />
                 <Button style={styles.button} mode='contained' title='BookInfo' onPress={() => navigation.navigate('BookInfo')} />
-                {/* BooklistScreen differs since navigation goes trought Tabs -> BooklistScreen */}
+                
                 <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false })} />
-                <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()} />
+                <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()} /> */}
               </View>
             ) : <SearchBookList navigation={navigation} data={bookListData}/>
             }
