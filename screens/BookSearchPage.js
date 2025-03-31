@@ -3,39 +3,48 @@ import React from 'react'
 import { FIREBASE_AUTH } from '../firebase/Config'
 import TopAppSearchBar from '../components/TopAppSearchBar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import BookCarousel from '../components/bookSearchPageComponents/BookCarousel'
-import BookList from '../components/bookSearchPageComponents/BookList'
+import BookShowcaseCarousel from '../components/bookSearchPageComponents/BookShowcaseCarousel'
+import BookShowcaseList from '../components/bookSearchPageComponents/BookShowcaseList'
 import { MenuProvider } from 'react-native-popup-menu'
 import { PaperProvider } from 'react-native-paper'
+import SearchBookList from '../components/bookSearchPageComponents/SearchBookList'
 
 
-export default function BookSearchPage({navigation}) {
+export default function BookSearchPage({ navigation }) {
 
-    return (
-      <PaperProvider>
+  const [searchVisibility, setSearchVisibility] = useState(false)
+  const [bookListData, setBookListData] = useState({})
+  const bookUpdate = (object) => {
+    setBookListData(object.records)
+    console.log(bookListData)
+  }
+  return (
+    <PaperProvider>
       <MenuProvider>
-    <SafeAreaView>
-      <View>
-        <TopAppSearchBar navigation={navigation} />
-        <Text style={{color:"tomato"}}>BookSearchPage</Text>
-
-        <Button title="juu"></Button>
-        <BookCarousel />
-        <BookList />
-        <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')}/>
-        <Button style={styles.button} mode='contained' title='BookInfo' onPress={() => navigation.navigate('BookInfo')}/>
-        {/* BooklistScreen differs since navigation goes trought Tabs -> BooklistScreen */}
-        <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('Tabs', {screen: 'BooklistScreen', initial: false})}/>
-        <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()}/>
-      </View>
-    </SafeAreaView>
-    </MenuProvider>
+        <SafeAreaView>
+          <View>
+            <TopAppSearchBar navigation={navigation} bookdata={bookUpdate} />
+            {!bookListData ? (
+              <View>
+                <BookShowcaseCarousel />
+                <BookShowcaseList />
+                <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')} />
+                <Button style={styles.button} mode='contained' title='BookInfo' onPress={() => navigation.navigate('BookInfo')} />
+                {/* BooklistScreen differs since navigation goes trought Tabs -> BooklistScreen */}
+                <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false })} />
+                <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()} />
+              </View>
+            ) : <SearchBookList navigation={navigation} data={bookListData}/>
+            }
+          </View>
+        </SafeAreaView>
+      </MenuProvider>
     </PaperProvider>
   )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-    },
+  container: {
+    padding: 10,
+  },
 })

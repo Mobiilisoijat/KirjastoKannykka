@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TextInput, Pressable } from "react-native";
 import Checkbox from "expo-checkbox";
+import { FIREBASE_DB, BOOKLIST, USERS } from '../firebase/Config'
+import { getAuth } from 'firebase/auth'
+import { doc, getDoc, updateDoc, addDoc, collection, deleteDoc, onSnapshot, query, setDoc } from 'firebase/firestore'
 
-function ReadingListPopUp () {
-  // we need to get status data from database KJJKJKLKLLJ
+function ReadingListPopUp ({bookId, book}) {
+  //Getting current user from firebase
+  const auth = getAuth()
+  const user = auth.currentUser
+  // we need to get status data from database
   const checkBoxData = [
     {
       text: "Luettu",
@@ -19,11 +25,83 @@ function ReadingListPopUp () {
     },
   ]
 
+  const [isSelected, setSelection] = useState(checkBoxData);
+  const [score, setScore] = useState(book.score ? String(book.score) : "0")
+
+  const isSelectedMounted = useRef(false)
+
   useEffect(() => {
     console.log('Calls to database. We need to know if item is or is not in readinglist.');
+    const checkBookState = async () => {
+      console.log(user.uid)
+      //(Temp?)Checking if user is logged in
+      if(user != null) {
+        //Checking if book exists in user's firebase
+        const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, bookId)
+        const bookSnap = await getDoc(bookRef)
+
+        if(bookSnap.exists()) {
+          const bookStatus = bookSnap.data().state
+          console.log(bookSnap.data)
+          if(bookStatus === "completed"){
+            changeState(0)
+          } else if (bookStatus === "planning"){
+            changeState(1)
+          } else if (bookStatus === "reading"){
+            changeState(2)
+          }
+        }
+        if(bookSnap.data().score !== undefined) {
+          setScore(String(bookSnap.data().score));
+        }
+      }
+    }
+    checkBookState()
   }, []);
 
-  const [isSelected, setSelection] = useState(checkBoxData);
+  useEffect(() => {
+    if(!isSelectedMounted.current) {
+      isSelectedMounted.current = true
+      return
+    }
+
+    const addToBooklist = async () => {
+      console.log("addToBooklist ran")
+      if(user != null) {
+        console.log("addToBooklist: user is not null")
+        //Checking if book exists in user's firebase
+        const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, bookId)
+        const bookSnap = await getDoc(bookRef)
+
+        let newBookStatus = "default"
+
+        isSelected.map((checkbox, index) => {
+          console.log(checkbox.status)
+          if (checkbox.status) {
+            if (index === 0) newBookStatus = "completed";
+            else if (index === 1) newBookStatus = "planning";
+            else if (index === 2) newBookStatus = "reading";
+          }
+        })
+
+        console.log(bookSnap.exists())
+        console.log(`after switch ${newBookStatus}`)
+        if(bookSnap.exists() && newBookStatus != "default") {
+          await updateDoc(bookRef, {
+            state: newBookStatus
+          })
+        } else if (newBookStatus == "default") {
+          console.log("all boxes unticked, deleting book from database")
+          await deleteDoc(bookRef)
+        } else {
+          console.log("Book doesnt exist, adding to database")
+          const image = book.images || null
+          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: image , score: 0, state: newBookStatus })
+        }
+      }
+    }
+    addToBooklist()
+  }, [isSelected]);
 
   function changeState(index) {
     //console.log(index)
@@ -42,6 +120,13 @@ function ReadingListPopUp () {
     setSelection(newSelection)
   }
 
+  const saveScore = async () => {
+    if (user != null) {
+      const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, bookId);
+      await updateDoc(bookRef, { score: parseInt(score, 10) });
+    }
+  };
+
   return(
     <View>
       {isSelected.map((checkboxObj, index) => {
@@ -54,9 +139,22 @@ function ReadingListPopUp () {
             value={checkboxObj.status}
             onValueChange={() => changeState(index)}
           />
+
         </View>
         )
       })}
+      <View style={{ padding: 4 }}>
+        <Text>Score:</Text>
+        <TextInput
+          value={score}
+          onChangeText={setScore}
+          keyboardType="numeric"
+          style={{ borderWidth: 1, padding: 4, width: 80 }}
+        />
+        <Pressable style={{ padding: 4 }} onPress={saveScore}>
+          <Text>Save</Text>
+        </Pressable>
+      </View>
     </View>
   )
 }

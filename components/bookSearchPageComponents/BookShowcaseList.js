@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 
-const BookList = () => {
+const BookShowcaseList = () => {
   return (
     <View style={styles.container}>
       <Text style={{color:"green"}}>BookList</Text>
@@ -14,4 +14,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default BookList
+export default BookShowcaseList

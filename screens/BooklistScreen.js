@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Title, TextInput } from 'react-native-paper'
 import BookList from '../components/BookList'
+import { getAuth } from 'firebase/auth'
 
 
 const BooklistScreen = () => {
   const [toggleState, setToggleState] = useState('all')  
   const [text, onChangeText] = useState('')
+  const auth = getAuth()
+  const user = auth.currentUser
 
   const onTogglePress = async (state) => {
     if( toggleState === state) {
@@ -31,7 +34,7 @@ const BooklistScreen = () => {
         <Button title="Luettu" onPress={() => onTogglePress("completed")}/>
         <Button title="Aion Lukea" onPress={() => onTogglePress("planning")}/>
         </View>
-        <Title>Käyttäjän Mikael lista</Title>
+        <Title>Käyttäjän {user.email} lista</Title>
         <BookList toggleState = {toggleState} textInput = {text}/>
     </SafeAreaView>
   )
