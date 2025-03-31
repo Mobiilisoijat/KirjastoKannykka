@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, Button } from 'react-native'
-import React from 'react'
-import { FIREBASE_AUTH } from '../firebase/Config'
-import TopAppSearchBar from '../components/TopAppSearchBar'
+import React, { useState } from 'react'
+import { TopAppSearchBar } from '../components/TopAppSearchBar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import BookShowcaseCarousel from '../components/bookSearchPageComponents/BookShowcaseCarousel'
 import BookShowcaseList from '../components/bookSearchPageComponents/BookShowcaseList'
 import { MenuProvider } from 'react-native-popup-menu'
 import { PaperProvider } from 'react-native-paper'
 import SearchBookList from '../components/bookSearchPageComponents/SearchBookList'
+import { FIREBASE_AUTH } from '../firebase/Config'
 
 
 export default function BookSearchPage({ navigation }) {
