@@ -44,7 +44,7 @@ const TopAppSearchBar = ({ navigation, bookdata }) => {
             fetch(searchURL, { signal })
                 .then(response => response.json())
                 .then((json) => {
-                    bookdata(json)
+                    json === null ? bookdata({}) : bookdata(json)
                 }).catch((error) => {
                     console.log(error)
                 })
