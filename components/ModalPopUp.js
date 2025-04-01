@@ -9,7 +9,7 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
     if(text.length > 0) {
       setValue(text)
     } else {
-      alert("Username cannot be empty")
+      alert("Field cannot be empty")
     }
   }
 
@@ -21,8 +21,8 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
       setVisible(false);
     }}>
     <View style={styles.container}>
-      <TextInput style={styles.input} value={text} placeholder='New username' autoCapitalize='none' onChangeText={(text) => setText(text)} />
-      <Button style={styles.button} mode='contained' title='Change username' onPress={() => valueHandler()}>{buttonText}</Button>
+      <TextInput style={styles.input} value={text} placeholder={buttonText} autoCapitalize='none' onChangeText={(text) => setText(text)} />
+      <Button style={styles.button} mode='contained' onPress={() => valueHandler()}>{buttonText}</Button>
     </View>
     </Modal>
   )
