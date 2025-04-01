@@ -13,18 +13,14 @@ const BookShowcaseCarousel = ({navigation, data}) => {
         keyExtractor={item => item.id}
         renderItem={({item}) => (
           <Pressable onPress={() => navigation.navigate("BookInfo",{bookId: item.id})}>
-            <Image source={{
-              uri: `https://api.finna.fi${item.images[0]}`
-              
-              
-              }}/>
             {item.images.length > 0 ? (
               <View style={styles.carouselBook}>
-              <Image 
+              <Image style={styles.image}
               source={{
                 uri: `https://api.finna.fi${item.images[0]}`
-              }}/>
-              <Text>{item.images[0]}</Text>
+              }}
+              />
+              <Text>{item.title}</Text>
               </View>
             ):(
               <View style={styles.carouselBook}>
@@ -52,6 +48,10 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       marginRight: 20
     },
+    image: {
+      height: 149,
+      width: 149,
+    }
 })
 
 export default BookShowcaseCarousel

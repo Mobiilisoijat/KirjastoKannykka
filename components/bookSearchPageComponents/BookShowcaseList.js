@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, FlatList, Pressable, Image } from 'react-native'
 import React from 'react'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const BookShowcaseList = ({navigation, data}) => {
   return (
@@ -36,6 +37,10 @@ const styles = StyleSheet.create({
     container: {
         margin: 50,
     },
+    image: {
+      height: 100,
+      width: 75,
+    }
 })
 
 export default BookShowcaseList

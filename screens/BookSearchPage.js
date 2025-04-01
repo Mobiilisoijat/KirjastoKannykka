@@ -40,7 +40,7 @@ export default function BookSearchPage({ navigation }) {
             {!bookListData ? (
               <View>
                 <BookShowcaseCarousel navigation={navigation} data={showcaseData}/>
-                <BookShowcaseList />
+                <BookShowcaseList navigation={navigation} data={showcaseData}/>
                 {/* <Button style={styles.button} mode='contained' title='Login screen' onPress={() => navigation.navigate('Login')} />
                 <Button style={styles.button} mode='contained' title='BookInfo' onPress={() => navigation.navigate('BookInfo')} />
                 
