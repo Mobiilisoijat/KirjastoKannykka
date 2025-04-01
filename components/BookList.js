@@ -13,7 +13,7 @@ const BookList = ({toggleState, textInput}) => {
   const auth = getAuth()
   const user = auth.currentUser
 
-  const testList = ([
+  /*const testList = ([
     { id: 150, author: "J.K. Rowling", title: "Harry Potter", score: "7", state: "completed" },
     { id: 52, author: "George Orwell", title: "1984", score: "9", state: "reading" },
     { id: 53, author: "F. Scott Fitzgerald", title: "The Great Gatsby", score: "8", state: "planning" },
@@ -34,7 +34,7 @@ const BookList = ({toggleState, textInput}) => {
     { id: 68, author: "Miguel de Cervantes", title: "Don Quixote", score: "10", state: "planning" },
     { id: 69, author: "Homer", title: "The Odyssey", score: "9", state: "completed" },
     { id: 70, author: "Dante Alighieri", title: "The Divine Comedy", score: "8", state: "reading" }
-    ]);
+    ]);*/
 
 
 
@@ -43,12 +43,6 @@ const BookList = ({toggleState, textInput}) => {
   }, [toggleState, currentList, textInput])
 
   useEffect(() => {
-    //save test
-    const saveTEST = async () => {
-        await save(); // Wait for save() to complete
-      };
-    saveTEST()
-
     //get users booklist data from firebase
     const queryRef = query(collection(FIREBASE_DB, USERS, user.uid, BOOKLIST))
     const unsubscribeSnapshot = onSnapshot(queryRef, (querySnapshot) => {
@@ -63,7 +57,7 @@ const BookList = ({toggleState, textInput}) => {
     }
   }, [])
 
-  const save = async () => {
+  /*const save = async () => {
     try {
     for (const book of testList) {
         const bookRef = doc(FIREBASE_DB, USERS, user.uid, BOOKLIST, String(book.id))
@@ -73,7 +67,7 @@ const BookList = ({toggleState, textInput}) => {
         console.error("ERROR SAVING BOOK, error")
         console.error(error.stack)
     }
-  }
+  }*/
 
   const filterBooklist = () => {
     let filtered = currentList
