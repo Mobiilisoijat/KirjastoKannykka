@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PaperProvider, Text, Avatar, TextInput, Button, Divider, IconButton } from "react-native-paper";
+import { PaperProvider, Text, Avatar, TextInput, Button, Divider } from "react-native-paper";
 import { BOOKREVIEWS, REVIEW, FIREBASE_DB  } from '../../firebase/Config';
 import { getAuth } from 'firebase/auth'
 import { doc, getDoc, query, setDoc, collection, getDocs, orderBy, updateDoc } from "firebase/firestore";
@@ -30,7 +30,7 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
 
   const getComments = async () => {
     try {
-      const q = query(collection(FIREBASE_DB, BOOKREVIEWS, bookId, "review"), orderBy("time", "desc"))
+      const q = query(collection(FIREBASE_DB, BOOKREVIEWS, bookId, REVIEW), orderBy("time", "desc"))
       const querySnapshot = await getDocs(q)
       const tempComments = []
       querySnapshot.forEach((doc) => {
