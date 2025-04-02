@@ -37,7 +37,9 @@ const BookShowcaseCarousel = ({navigation, data}) => {
 }
 const styles = StyleSheet.create({
     container: {
-        margin: 50,
+        marginLeft: 20,
+        marginRight: 20,
+        marginBottom: 20,
     },
     carouselBook: {
       height: 199, 
