@@ -118,7 +118,7 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
         )
       }
       <Text style={{paddingTop: 8, paddingBottom: 8, fontSize: 16}}>Kirjoita arvostelu</Text>
-      {!user && <Text>Kirjaudu jättääksesi arvostelu!</Text>}
+      {!user && <Text>Kirjaudu sisään jättääksesi arvostelu!</Text>}
       <View style={{display: "flex", flexDirection: "row"}}>
         <Avatar.Icon size={24} icon="folder"/>
         <Text>{userName}</Text>
@@ -132,7 +132,7 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
         {recommend ? "Suosittelen" : "En suosittele"}
       </Button>
       <TextInput
-        label={'Write a review'}
+        label={'Kirjoita arvostelu'}
         multiline={true}
         value={text}
         onChangeText={text => setText(text)}
