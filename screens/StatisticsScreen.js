@@ -20,13 +20,13 @@ function StatisticsScreen () {
 
   useEffect(() => {
     fetchData()
-    console.log('useEffect ran, fethcingData')
+    //console.log('useEffect ran, fethcingData')
   }, [])
 
   useEffect(() => {
     if (booksReadListPerYear.length > 0 || booksReadListInYear.length > 0) {
       chartData();
-      console.log('useEffect ran, ChartData')
+      //console.log('useEffect ran, ChartData')
     }
   }, [booksReadListPerYear, booksReadListInYear]);
 
@@ -53,22 +53,40 @@ function StatisticsScreen () {
   const chartData = () => {
     // book readings trought all the years
     let yearList = []
+    let lowestYear = 0
+    let highestYear = 0
     booksReadListPerYear.forEach((item) => {
       const year = item.value.split("-")[0]
-      const test = yearList.find((record) => record.label === year)
+      const recordObject = yearList.find((record) => record.label === year)
       // if not in list (meaning it's undefined) we add it to the list
-      if (test === undefined){
+      if (recordObject === undefined){
         yearList.push({value: 1, label: year})
       } else {
         // if already in the list we increase the value by one
         const tempindex = yearList.findIndex((record) => record.label === year)
         yearList[tempindex].value++
       }
+      if (year > highestYear) {
+        highestYear = year
+        if (lowestYear === 0){
+          lowestYear = year
+        }
+      } else if (year < lowestYear){
+        lowestYear = year
+      }
     })
+    //console.log('lowest', lowestYear)
+    //console.log('biggest', highestYear)
+    // checks if user has no books read between years and adds the year if so
+    // ex. someone could read a book in 2023 and 2025 but not in 2024
+    for (let i = parseInt(lowestYear)+1; i < highestYear; i++) {
+      const recordObject = yearList.find((record) => record.label === i)
+      if (recordObject === undefined){
+        yearList.push({value: 0, label: i})
+      }
+    }
     // sorting so that the highest year appears first in the list (ex. 2025 > 2024)
     yearList.sort((a, b) => a.label - b.label)
-    // NOTE! We are missing a system where missing years would be added
-    // ex. someone could read a book in 2023 and 2025 but not in 2024. this wouldnt show up on the list
     setStatsChart1(yearList)
 
     // book readings in current year
@@ -130,30 +148,33 @@ function StatisticsScreen () {
 
   return(
     <PaperProvider>
-      <ScrollView style={{marginBottom: 42}}>
+      <ScrollView style={{marginBottom: 60}}>
         <Text>Tykättyjen kirjojen määrä: {likes}</Text>
         <Text
           style={{
             fontSize: 16,
             fontWeight: 'bold',
             textAlign: 'center',
+            marginTop: 16
           }}
           >
         Luetut kirjat per vuosi
         </Text>
         {
+          // bug: if only one book in the list the chart shows up funny. is related to noOfSections and maxValue
           (statsChart1.length > 0)
           ?
           <BarChart
             barWidth={24}
-            //noOfSections={2}
+            //noOfSections={statsChart1.length > 1 ? undefined : 1} // undefined uses the default value
             barBorderRadius={2}
             disablePress={true}
             frontColor="blue"
             data={statsChart1}
             roundToDigits={0}
-            yAxisThickness={0}
+            yAxisThickness={1}
             xAxisThickness={0}
+            //maxValue={statsChart1.length < 2 && 1}
             isAnimated
           />
           :
@@ -164,33 +185,37 @@ function StatisticsScreen () {
             fontSize: 16,
             fontWeight: 'bold',
             textAlign: 'center',
+            marginTop: 16
           }}
           >
         Luetut kirjat tänä vuonna
         </Text>
         {
-          ((statsChart2.length > 0) && wasListUpdated.current == true)
+          (wasListUpdated.current == true)
           ?
           <BarChart
-            barWidth={24}
-            roundToDigits={0}
-            barBorderRadius={2}
-            disablePress={true}
-            frontColor="red"
-            data={statsChart2}
-            yAxisThickness={0}
-            xAxisThickness={0}
-            isAnimated
-            yAxisSuffix=""
+          barWidth={24}
+          //noOfSections={statsChart2.length > 1 ? undefined : 1} // undefined uses the default value
+          barBorderRadius={2}
+          disablePress={true}
+          frontColor="red"
+          data={statsChart2}
+          roundToDigits={0}
+          yAxisThickness={1}
+          xAxisThickness={0}
+          //maxValue={statsChart2.length < 2 && 1}
+          isAnimated
           />
           :
           <Text>Et ole lukenut tänä vuonna kirjoja!</Text>
         }
+
         <Button
           onPress={() => firebaseGetBookList()}
           >
           BookList
         </Button>
+
       </ScrollView>
     </PaperProvider>
   )
