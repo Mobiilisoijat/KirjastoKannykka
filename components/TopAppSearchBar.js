@@ -41,7 +41,7 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
         controllerRef.current = new AbortController()
         const signal = controllerRef.current.signal
         if (state.search.length > 1) {
-            const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search}&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
+             const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search.replace(/\s/g,'+')}&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
             fetch(searchURL, { signal })
                 .then(response => response.json())
                 .then((json) => {
