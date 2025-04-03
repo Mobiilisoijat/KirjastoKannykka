@@ -79,7 +79,7 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Menu item" />
                 <Menu.Item onPress={() => { closeMenu() }} leadingIcon="weather-sunny" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'Profile', initial: false }); resetPage() }} title="Profiili" />
-                <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Käyttäjäpalaute" />
+                <Menu.Item onPress={() => { navigation.navigate('FeedbackScreen'); resetPage() }} title="Käyttäjäpalaute" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Asetukset" />
                 <Menu.Item onPress={() => { FIREBASE_AUTH.signOut(); resetPage() }} title="Kirjaudu ulos" />
             </Menu>
