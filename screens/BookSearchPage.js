@@ -33,6 +33,7 @@ export default function BookSearchPage({ navigation }) {
                 {/* BooklistScreen differs since navigation goes trought Tabs -> BooklistScreen */}
                 <Button style={styles.button} mode='contained' title='BooklistScreen' onPress={() => navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false })} />
                 <Button style={styles.button} mode='contained' title='Logout' onPress={() => FIREBASE_AUTH.signOut()} />
+                <Button style={styles.button} mode='contained' title='FeedbackScreen' onPress={() => navigation.navigate('Tabs', { screen: 'FeedbackScreen', initial: false })} />
               </View>
             ) : <SearchBookList navigation={navigation} data={bookListData}/>
             }
