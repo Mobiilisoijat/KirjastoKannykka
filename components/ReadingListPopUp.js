@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable } from "react-native";
 import Checkbox from "expo-checkbox";
 import { FIREBASE_DB, BOOKLIST, USERS } from '../firebase/Config'
 import { getAuth } from 'firebase/auth'
-import { doc, getDoc, updateDoc, addDoc, collection, deleteDoc, onSnapshot, query, setDoc } from 'firebase/firestore'
+import { Timestamp, doc, getDoc, updateDoc, addDoc, collection, deleteDoc, onSnapshot, query, setDoc } from 'firebase/firestore'
 
 function ReadingListPopUp ({bookId, book}) {
   //Getting current user from firebase
@@ -96,7 +96,11 @@ function ReadingListPopUp ({bookId, book}) {
         } else {
           console.log("Book doesnt exist, adding to database")
           const image = book.images || null
-          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: image , score: 0, state: newBookStatus })
+          const postTime = new Date()
+          const isoString = postTime.toISOString()
+          const formattedTime = isoString.split("T")[0]
+          console.log(formattedTime)
+          await setDoc(bookRef, { title: book.bookTitle, author: book.authors, coverPath: image , score: 0, state: newBookStatus, time: formattedTime })
         }
       }
     }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PaperProvider, Text, Avatar, TextInput, Button, Divider, IconButton } from "react-native-paper";
+import { PaperProvider, Text, Avatar, TextInput, Button, Divider } from "react-native-paper";
 import { BOOKREVIEWS, REVIEW, FIREBASE_DB  } from '../../firebase/Config';
 import { getAuth } from 'firebase/auth'
 import { doc, getDoc, query, setDoc, collection, getDocs, orderBy, updateDoc } from "firebase/firestore";
@@ -24,13 +24,12 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
 
   // check if user is logged in
   if (user && user.uid){
-    // move this ??
     docRef = doc(FIREBASE_DB, BOOKREVIEWS, bookId, REVIEW, userName)
   }
 
   const getComments = async () => {
     try {
-      const q = query(collection(FIREBASE_DB, BOOKREVIEWS, bookId, "review"), orderBy("time", "desc"))
+      const q = query(collection(FIREBASE_DB, BOOKREVIEWS, bookId, REVIEW), orderBy("time", "desc"))
       const querySnapshot = await getDocs(q)
       const tempComments = []
       querySnapshot.forEach((doc) => {
@@ -118,33 +117,40 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
         )
       }
       <Text style={{paddingTop: 8, paddingBottom: 8, fontSize: 16}}>Kirjoita arvostelu</Text>
-      {!user && <Text>Kirjaudu jättääksesi arvostelu!</Text>}
-      <View style={{display: "flex", flexDirection: "row"}}>
-        <Avatar.Icon size={24} icon="folder"/>
-        <Text>{userName}</Text>
-      </View>
-      <Button
-        value={recommend}
-        onPress={() => setRecommend(status => !status)}
-        icon={recommend ? 'thumb-up' : 'thumb-down'}
-        style={{width: '60%'}}
-      >
-        {recommend ? "Suosittelen" : "En suosittele"}
-      </Button>
-      <TextInput
-        label={'Write a review'}
-        multiline={true}
-        value={text}
-        onChangeText={text => setText(text)}
-        style={{width: "100%"}}
-      />
-      <Button
-        mode="contained"
-        style={{ marginTop: 10 }}
-        onPress={checkComments}
-      >
-        Julkaise
-      </Button>
+      {
+        !user
+        ?
+        <Text>Kirjaudu sisään jättääksesi arvostelu!</Text>
+        :
+        <View>
+          <View style={{display: "flex", flexDirection: "row"}}>
+            <Avatar.Icon size={24} icon="folder"/>
+            <Text>{userName}</Text>
+          </View>
+          <Button
+            value={recommend}
+            onPress={() => setRecommend(status => !status)}
+            icon={recommend ? 'thumb-up' : 'thumb-down'}
+            style={{width: '60%'}}
+          >
+            {recommend ? "Suosittelen" : "En suosittele"}
+          </Button>
+          <TextInput
+            label={'Kirjoita arvostelu'}
+            multiline={true}
+            value={text}
+            onChangeText={text => setText(text)}
+            style={{width: "100%"}}
+          />
+          <Button
+            mode="contained"
+            style={{ marginTop: 10 }}
+            onPress={checkComments}
+          >
+            Julkaise
+          </Button>
+        </View>
+      }
     </PaperProvider>
   )
 }
