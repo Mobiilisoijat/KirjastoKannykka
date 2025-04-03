@@ -1,9 +1,10 @@
-import { View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import React, { useEffect, useReducer, useRef, useState, } from 'react'
 import { Searchbar, Button, Menu } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
+import { FIREBASE_AUTH } from '../firebase/Config'
 
-const TopAppSearchBar = ({ navigation, bookdata }) => {
+const TopAppSearchBar = ({ navigation, bookdata={} }) => {
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
@@ -40,11 +41,11 @@ const TopAppSearchBar = ({ navigation, bookdata }) => {
         controllerRef.current = new AbortController()
         const signal = controllerRef.current.signal
         if (state.search.length > 1) {
-            const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search}&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
+             const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search.replace(/\s/g,'+')}&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
             fetch(searchURL, { signal })
                 .then(response => response.json())
                 .then((json) => {
-                    bookdata(json)
+                    json === null ? bookdata({}) : bookdata(json)
                 }).catch((error) => {
                     console.log(error)
                 })
@@ -58,7 +59,7 @@ const TopAppSearchBar = ({ navigation, bookdata }) => {
         <View>
             <Searchbar
                 placeholder={state.placeholder}
-                onChangeText={(text) => searchBooks(text)}
+                onChangeText={(text) => {searchBooks(text)}}
                 value={state.search}
                 icon="menu"
                 onIconPress={openMenu}
@@ -78,11 +79,12 @@ const TopAppSearchBar = ({ navigation, bookdata }) => {
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Menu item" />
                 <Menu.Item onPress={() => { closeMenu() }} leadingIcon="weather-sunny" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'Profile', initial: false }); resetPage() }} title="Profiili" />
-                <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Käyttäjäpalaute" />
+                <Menu.Item onPress={() => { navigation.navigate('FeedbackScreen'); resetPage() }} title="Käyttäjäpalaute" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Asetukset" />
+                <Menu.Item onPress={() => { FIREBASE_AUTH.signOut(); resetPage() }} title="Kirjaudu ulos" />
             </Menu>
         </View>
-
+        
     )
 
 }

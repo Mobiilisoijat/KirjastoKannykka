@@ -29,7 +29,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-svg": "15.8.0",
     "react-native-uuid": "^2.0.3",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "expo-mail-composer": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -39,7 +39,7 @@ export default function LikeButton( { bookId, bookInfo } ) {
 
   const firebaseDataAdd = async () => {
     try {
-      await setDoc(docRef, {
+      await setDoc(docRef, {  
         author: bookInfo.authors,
         coverPath: bookInfo.images || null,
         liked: true,
