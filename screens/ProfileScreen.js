@@ -41,17 +41,23 @@ export default function ProfileScreen() {
     })
   }
 
-  const usernameHandler = () => {
+  const buttonTextHandler = (test) => {
+    if (test === 'Change username') {
+      console.log('Change username')
+      setButtonText('Change username')
+    } else {
+      console.log('Change profile picture')
+      setButtonText('Change profile picture')
+    }
     setVisible(true)
-    setButtonText('Change username')
   }
 
   return (
     <View style={styles.container}>
       <Avatar.Image size={150} source={{uri:pfp}}/>
       <Text>{username}</Text>
-      <Button style={styles.button} mode='contained' title='Change username' onPress={() => usernameHandler()}>Change username</Button>
-      <Button style={styles.button} mode='contained' title='Change profile picture' onPress={() => showModal()}>Change profile picture</Button>
+      <Button style={styles.button} mode='contained' title='Change username' onPress={() => buttonTextHandler('Change username')}>Change username</Button>
+      <Button style={styles.button} mode='contained' title='Change profile picture' onPress={() => buttonTextHandler('Change profile picture')}>Change profile picture</Button>
       {visible && (
         <ChangeUsernamePopUp buttonText={buttonText} setValue={setUsername} visible={visible} setVisible={setVisible} />
       )}

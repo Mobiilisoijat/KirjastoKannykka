@@ -1,9 +1,11 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Image } from 'react-native'
 import React, { useState } from 'react'
 import { Modal, Button, TextInput } from 'react-native-paper';
+import * as ImagePicker from 'expo-image-picker';
 
 const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
   const [text, setText] = useState('')
+  const [image, setImage] = useState(null)
 
   const valueHandler = () => {
     if(text.length > 0) {
@@ -11,6 +13,19 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
     } else {
       alert("Field cannot be empty")
     }
+  }
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+    console.log(result);
   }
 
   return (
@@ -21,8 +36,18 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
       setVisible(false);
     }}>
     <View style={styles.container}>
-      <TextInput style={styles.input} value={text} placeholder={buttonText} autoCapitalize='none' onChangeText={(text) => setText(text)} />
-      <Button style={styles.button} mode='contained' onPress={() => valueHandler()}>{buttonText}</Button>
+    {buttonText === 'Change username' ? (
+      <>
+        <TextInput style={styles.input} value={text} placeholder={buttonText} autoCapitalize='none' onChangeText={(text) => setText(text)} />
+        <Button style={styles.button} mode='contained' onPress={() => valueHandler()}>{buttonText}</Button>
+      </>
+    ) : (
+      <>
+        <Button title="Pick an image from camera roll" onPress={pickImage}>Pick an image</Button>
+        {image && <Image source={{ uri: image }} style={styles.image} />}
+        <Button style={styles.button} mode='contained' onPress={() => imageHandler()}>{buttonText}</Button>
+      </>
+    )}
     </View>
     </Modal>
   )
