@@ -2,10 +2,12 @@ import { View, StyleSheet, Image } from 'react-native'
 import React, { useState } from 'react'
 import { Modal, Button, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
+import { FIREBASE_STORAGE } from '../firebase/Config';
 
-const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
+const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
   const [text, setText] = useState('')
   const [image, setImage] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   const valueHandler = () => {
     if(text.length > 0) {
@@ -23,10 +25,40 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText }) => {
       quality: 1,
     });
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const source = result.assets[0].uri
+      setImage(source);
     }
-    console.log(result);
+    console.log(image)
   }
+
+  const imageHandler = async () => {
+    setUploading(true)
+    console.log('Uploading image...') 
+    const response = await fetch(image)
+    const blob = await response.blob()
+    const filename = image.substring(image.lastIndexOf('/') + 1)
+    const ref = FIREBASE_STORAGE.child(filename).put(blob)
+    try {
+      await ref
+    }
+    catch (error) {
+      console.log('Error uploading image: ', error)
+    } finally {
+      setUploading(false)
+      console.log('Uploading finished')
+    }
+    setImage(null)
+  }
+
+/*
+  const imageHandler = (result) => {
+    try {
+      setUploading(true)
+
+      if(!result.canceled) {
+        const uploadUri = await uploadImageAsync(result.uri)
+
+*/
 
   return (
     <Modal

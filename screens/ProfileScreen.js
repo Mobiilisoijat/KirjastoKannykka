@@ -8,11 +8,13 @@ export default function ProfileScreen() {
   const [visible, setVisible] = useState(false)
   const [username, setUsername] = useState('')
   const [buttonText, setButtonText] = useState('')
-  const [pfp, setPfp] = useState('https://github-production-user-asset-6210df.s3.amazonaws.com/72543424/426615926-ba944629-d763-4e80-a6e3-f77c2ed97e1b.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250325%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250325T155748Z&X-Amz-Expires=300&X-Amz-Signature=314b140fab09845049fe22effed6e9584abefc2cd43979e8a7fa2e0eb28561ae&X-Amz-SignedHeaders=host');
+  const [loading, setLoading] = useState(false)
+  const [pfp, setPfp] = useState('https://media.discordapp.net/attachments/904124131883233321/1350887378688151682/dkie5na7rf971.jpg?ex=67f4b7a9&is=67f36629&hm=1701e98685b52350b20d81a7dcb5a51599965ab4320f42fc566615e942618b52&=&format=webp');
   const auth = getAuth();
   const user = auth.currentUser;
 
   useEffect(() => {
+    setLoading(true)
     if (user.displayName) {
       setUsername(user.displayName)
     } else {
@@ -22,12 +24,16 @@ export default function ProfileScreen() {
     if (user.photoURL) {
       setPfp(user.photoURL)
     } else {
-      setPfp('https://github-production-user-asset-6210df.s3.amazonaws.com/72543424/426615926-ba944629-d763-4e80-a6e3-f77c2ed97e1b.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250325%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250325T155748Z&X-Amz-Expires=300&X-Amz-Signature=314b140fab09845049fe22effed6e9584abefc2cd43979e8a7fa2e0eb28561ae&X-Amz-SignedHeaders=host')
+      setPfp('https://media.discordapp.net/attachments/904124131883233321/1350887378688151682/dkie5na7rf971.jpg?ex=67f4b7a9&is=67f36629&hm=1701e98685b52350b20d81a7dcb5a51599965ab4320f42fc566615e942618b52&=&format=webp')
     }
+    setLoading(false)
   }, [])
 
   useEffect(() => {
-    changeUsername()
+    if(!loading) {
+      changeUsername()
+      //changePfp()
+    }
   }, [username])
 
   const changeUsername = async() => {
@@ -59,7 +65,7 @@ export default function ProfileScreen() {
       <Button style={styles.button} mode='contained' title='Change username' onPress={() => buttonTextHandler('Change username')}>Change username</Button>
       <Button style={styles.button} mode='contained' title='Change profile picture' onPress={() => buttonTextHandler('Change profile picture')}>Change profile picture</Button>
       {visible && (
-        <ChangeUsernamePopUp buttonText={buttonText} setValue={setUsername} visible={visible} setVisible={setVisible} />
+        <ChangeUsernamePopUp buttonText={buttonText} setPfp={setPfp} setValue={setUsername} visible={visible} setVisible={setVisible} />
       )}
     </View>
   )
