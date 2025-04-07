@@ -1,7 +1,7 @@
 import react, { useState } from "react";
 import { View } from "react-native";
 import { Button, Text, PaperProvider, TextInput } from "react-native-paper";
-import { LLM_API_URL, LLM_MODEL } from "../firebase/Config";
+import { LLM_API_URL } from "../firebase/Config";
 
 function ChatbotScreen() {
   const [text, setText] = useState("Hello")
@@ -9,6 +9,7 @@ function ChatbotScreen() {
 
   const fetchFunction = async (text) => {
     console.log('pressed')
+    console.log(LLM_API_URL)
     const url = `${LLM_API_URL}/api/generate`
     try {
       const res = await fetch(url, {
@@ -17,12 +18,17 @@ function ChatbotScreen() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": `${LLM_MODEL}`,
+          // for Kobold
           "prompt": `${text}`,
-          "options": {
-            "temperature": 0.2 // more logical answer meaning it's less creative. (Change this if user want's to create a story ?)
-          },
-          "stream": false
+          "max_tokens": 50,
+          "temperature": 0.6,
+          "min_P": 0.1, // not necessarely needed
+          "top_K": 10, // not necessarely needed
+          // for Ollama
+          //"options": {
+          //  "model": `${LLM_MODEL_NAME}`,
+          //  "num_gpu": 21,
+          //}
         })
       })
       if (!res.ok) {
@@ -30,7 +36,7 @@ function ChatbotScreen() {
         return
       }
       const json = await res.json()
-      console.log(`prompt ${text} \n`, json.response)
+      console.log(`prompt ${text} \n`, json)
       setResponseText(json.response)
     } catch (error) {
       console.log('fetch error', error)
