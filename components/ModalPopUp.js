@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Modal, Button, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { FIREBASE_STORAGE } from '../firebase/Config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
   const [text, setText] = useState('')
@@ -27,38 +28,38 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
     if (!result.canceled) {
       const source = result.assets[0].uri
       setImage(source);
+      //console.log(source)
     }
-    console.log(image)
   }
 
   const imageHandler = async () => {
-    setUploading(true)
-    console.log('Uploading image...') 
-    const response = await fetch(image)
-    const blob = await response.blob()
-    const filename = image.substring(image.lastIndexOf('/') + 1)
-    const ref = FIREBASE_STORAGE.child(filename).put(blob)
-    try {
-      await ref
+    if (image) {
+      setUploading(true);
+      console.log("Uploading image...");
+  
+      try {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const filename = image.substring(image.lastIndexOf("/") + 1);
+        const storageRef = ref(FIREBASE_STORAGE, 'images/'+filename);
+  
+        await uploadBytes(storageRef, blob);
+
+        const url = await getDownloadURL(storageRef)
+        setPfp(url);
+
+        console.log("Image uploaded successfully");
+      } catch (error) {
+        console.log("Error uploading image: ", error);
+      } finally {
+        setUploading(false);
+        console.log("Uploading finished");
+      }
+      setImage(null);
+    } else {
+      alert("Please select an image");
     }
-    catch (error) {
-      console.log('Error uploading image: ', error)
-    } finally {
-      setUploading(false)
-      console.log('Uploading finished')
-    }
-    setImage(null)
-  }
-
-/*
-  const imageHandler = (result) => {
-    try {
-      setUploading(true)
-
-      if(!result.canceled) {
-        const uploadUri = await uploadImageAsync(result.uri)
-
-*/
+  };
 
   return (
     <Modal
@@ -71,13 +72,13 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
     {buttonText === 'Change username' ? (
       <>
         <TextInput style={styles.input} value={text} placeholder={buttonText} autoCapitalize='none' onChangeText={(text) => setText(text)} />
-        <Button style={styles.button} mode='contained' onPress={() => valueHandler()}>{buttonText}</Button>
+        <Button style={styles.button} mode='contained' onPress={valueHandler}>{buttonText}</Button>
       </>
     ) : (
       <>
         <Button title="Pick an image from camera roll" onPress={pickImage}>Pick an image</Button>
         {image && <Image source={{ uri: image }} style={styles.image} />}
-        <Button style={styles.button} mode='contained' onPress={() => imageHandler()}>{buttonText}</Button>
+        <Button style={styles.button} mode='contained' onPress={imageHandler}>{buttonText}</Button>
       </>
     )}
     </View>

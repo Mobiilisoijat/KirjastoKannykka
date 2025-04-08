@@ -9,7 +9,7 @@ export default function ProfileScreen() {
   const [username, setUsername] = useState('')
   const [buttonText, setButtonText] = useState('')
   const [loading, setLoading] = useState(false)
-  const [pfp, setPfp] = useState('https://media.discordapp.net/attachments/904124131883233321/1350887378688151682/dkie5na7rf971.jpg?ex=67f4b7a9&is=67f36629&hm=1701e98685b52350b20d81a7dcb5a51599965ab4320f42fc566615e942618b52&=&format=webp');
+  const [pfp, setPfp] = useState('');
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -24,7 +24,7 @@ export default function ProfileScreen() {
     if (user.photoURL) {
       setPfp(user.photoURL)
     } else {
-      setPfp('https://media.discordapp.net/attachments/904124131883233321/1350887378688151682/dkie5na7rf971.jpg?ex=67f4b7a9&is=67f36629&hm=1701e98685b52350b20d81a7dcb5a51599965ab4320f42fc566615e942618b52&=&format=webp')
+      setPfp('')
     }
     setLoading(false)
   }, [])
@@ -32,7 +32,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     if(!loading) {
       changeUsername()
-      //changePfp()
+      changePfp()
     }
   }, [username])
 
@@ -44,6 +44,17 @@ export default function ProfileScreen() {
       console.log('Username updated successfully')
     }).catch((error) => {
       console.log('Error updating username: ', error)
+    })
+  }
+
+  const changePfp = async() => {
+    await updateProfile(user, {photoURL: pfp})
+    .then(() => {
+      setVisible(false)
+      console.log(user.photoURL)
+      console.log('Profile picture updated successfully')
+    }).catch((error) => {
+      console.log('Error updating profile picture: ', error)
     })
   }
 
