@@ -16,7 +16,6 @@ export default function BookSearchPage({ navigation }) {
   const [showcaseData, setShowcaseData] = useState({})
   const bookUpdate = (object) => {
     setBookListData(object.records)
-    console.log(bookListData)
   }
   useEffect(() => {
     fetch(URL)

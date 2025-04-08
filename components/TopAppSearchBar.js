@@ -4,7 +4,7 @@ import { Searchbar, Button, Menu } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
 import { FIREBASE_AUTH } from '../firebase/Config'
 
-const TopAppSearchBar = ({ navigation, bookdata={} }) => {
+const TopAppSearchBar = ({ navigation, bookdata={search: 20004} }) => {
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
@@ -20,8 +20,8 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
         const didBlurSubscription = navigation.addListener('didBlur', () => {
             bookdata({})
         })*/
-
     }
+    
     // useEffect(() => {
     //     const unsubscribe = navigation.addListener('focus', () => {
     //         setTest("");
@@ -73,7 +73,7 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BookSearchPage', initial: false }); resetPage() }} title="Koti" />
                 <Menu.Item onPress={() => { navigation.navigate('BookInfo'); resetPage() }} title="BookInfo Example" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false }); resetPage() }} title="Kirjalista" />
-                <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Lue ISBN koodi" />
+                <Menu.Item onPress={() => { navigation.navigate('ISBNReaderScreen'); resetPage() }} title="Lue ISBN koodi" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Kaverit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Viestit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Menu item" />
