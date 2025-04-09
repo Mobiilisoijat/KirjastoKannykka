@@ -6,10 +6,9 @@ import { LLM_API_URL, LLM_PASSWORD, LLM_USER } from "../firebase/Config";
 function ChatbotScreen() {
   const [text, setText] = useState("Hello")
   const [responseText, setResponseText] = useState("First answer takes time. The chatbot doesn't remember what you asked previously")
+  const [buttonOff, setButtonOff] = useState(false)
 
   const fetchFunction = async (text) => {
-    console.log('pressed')
-    console.log(LLM_API_URL)
     const url = `${LLM_API_URL}/api/generate`
     try {
       const res = await fetch(url, {
@@ -37,11 +36,12 @@ function ChatbotScreen() {
         return
       }
       const json = await res.json()
-      console.log(`prompt ${text} \n`, json)
+      console.log(`prompt ${text} \n`, json.response)
       setResponseText(json.response)
     } catch (error) {
       console.log('fetch error', error)
     }
+    setButtonOff(false)
   }
 
   return(
@@ -55,11 +55,12 @@ function ChatbotScreen() {
         </View>
         <View style={{position: 'absolute', bottom: 50, left: 0, right: 0}}>
           <Button
+            disabled={buttonOff}
             mode="contained"
             style={{width: 140}}
-            onPress={() => fetchFunction(text)}
+            onPress={() => {fetchFunction(text); setButtonOff(true)}}
             >
-            Send
+            {buttonOff ? "Sending..." : "Send"}
           </Button>
           <TextInput
             label={'Write'}
