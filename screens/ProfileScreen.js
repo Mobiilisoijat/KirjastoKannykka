@@ -5,36 +5,25 @@ import { getAuth, updateProfile } from 'firebase/auth'
 import ChangeUsernamePopUp from '../components/ModalPopUp'
 
 export default function ProfileScreen() {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  console.log(user.displayName)
+  console.log(user.photoURL)
   const [visible, setVisible] = useState(false)
   const [username, setUsername] = useState('')
   const [buttonText, setButtonText] = useState('')
-  const [loading, setLoading] = useState(false)
   const [pfp, setPfp] = useState('');
-  const auth = getAuth();
-  const user = auth.currentUser;
-
+  
   useEffect(() => {
-    setLoading(true)
     if (user.displayName) {
       setUsername(user.displayName)
-    } else {
-      setUsername('no username')
-    }
+    } 
+    
 
     if (user.photoURL) {
       setPfp(user.photoURL)
-    } else {
-      setPfp('')
-    }
-    setLoading(false)
+    } 
   }, [])
-
-  useEffect(() => {
-    if(!loading) {
-      changeUsername()
-      changePfp()
-    }
-  }, [username])
 
   const changeUsername = async() => {
     await updateProfile(user, {displayName: username})
@@ -76,7 +65,7 @@ export default function ProfileScreen() {
       <Button style={styles.button} mode='contained' title='Change username' onPress={() => buttonTextHandler('Change username')}>Change username</Button>
       <Button style={styles.button} mode='contained' title='Change profile picture' onPress={() => buttonTextHandler('Change profile picture')}>Change profile picture</Button>
       {visible && (
-        <ChangeUsernamePopUp buttonText={buttonText} setPfp={setPfp} setValue={setUsername} visible={visible} setVisible={setVisible} />
+        <ChangeUsernamePopUp buttonText={buttonText} changePfp={changePfp} changeUsername={changeUsername} setPfp={setPfp} setValue={setUsername} visible={visible} setVisible={setVisible} />
       )}
     </View>
   )

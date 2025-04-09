@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { FIREBASE_STORAGE } from '../firebase/Config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
+const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp, changePfp, changeUsername }) => {
   const [text, setText] = useState('')
   const [image, setImage] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -13,6 +13,7 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
   const valueHandler = () => {
     if(text.length > 0) {
       setValue(text)
+      changeUsername()
     } else {
       alert("Field cannot be empty")
     }
@@ -53,6 +54,7 @@ const ModalPopUp = ({ setVisible, visible, setValue, buttonText, setPfp }) => {
         console.log("Error uploading image: ", error);
       } finally {
         setUploading(false);
+        changePfp()
         console.log("Uploading finished");
       }
       setImage(null);
