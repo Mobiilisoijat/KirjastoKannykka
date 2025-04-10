@@ -103,7 +103,7 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
           comments.map((doc) => (
             <View style={{paddingTop: 8, paddingBottom: 8}} key={doc.userName}>
               <View style={{display: "flex", flexDirection: "row"}}>
-                <Avatar.Icon size={24} icon="folder"/>
+                <Avatar.Icon size={24} icon="account"/>
                 <Text>{doc.userName}</Text>
               </View>
               <View style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'space-between'}}>
@@ -124,7 +124,7 @@ function BookReview( { userName, bookId, setAlertVisible, updateData, setUpdateD
         :
         <View>
           <View style={{display: "flex", flexDirection: "row"}}>
-            <Avatar.Icon size={24} icon="folder"/>
+            <Avatar.Icon size={24} icon="account"/>
             <Text>{userName}</Text>
           </View>
           <Button
