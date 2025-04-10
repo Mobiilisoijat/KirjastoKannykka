@@ -9,7 +9,11 @@ const TopAppSearchBar = ({ navigation, bookdata={search: 20004} }) => {
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
 
-    const openMenu = () => { setVisible(true); console.log("menu opened") }
+    const testimies = () => {
+        console.log("JUUUUUUUPAJUUUUUUUUUUUUUUUUUUUUUUU")
+    }
+
+    const openMenu = () => { setVisible(true); console.log("menu opened"); dispatch({type: 'search', text: bookdata?.search}) }
     const closeMenu = () => { setVisible(false); console.log("closed") }
     const resetPage = () => {
         setVisible(false)
@@ -73,7 +77,10 @@ const TopAppSearchBar = ({ navigation, bookdata={search: 20004} }) => {
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BookSearchPage', initial: false }); resetPage() }} title="Koti" />
                 <Menu.Item onPress={() => { navigation.navigate('BookInfo'); resetPage() }} title="BookInfo Example" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false }); resetPage() }} title="Kirjalista" />
-                <Menu.Item onPress={() => { navigation.navigate('ISBNReaderScreen'); resetPage() }} title="Lue ISBN koodi" />
+                <Menu.Item onPress={() => { 
+                    navigation.navigate('ISBNReaderScreen');
+                    resetPage() 
+                }} title="Lue ISBN koodi" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Kaverit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Viestit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Menu item" />
