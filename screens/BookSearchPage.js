@@ -19,6 +19,7 @@ export default function BookSearchPage({ navigation }) {
     setBookListData(object.records)
   }
   useEffect(() => {
+    bookUpdate({search: navigation.params?.search})
     fetch(URL)
     .then(response => response.json())
     .then((json) => {
