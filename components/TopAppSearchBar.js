@@ -4,12 +4,12 @@ import { Searchbar, Button, Menu } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
 import { FIREBASE_AUTH } from '../firebase/Config'
 
-const TopAppSearchBar = ({ navigation, bookdata={search: 20004} }) => {
+const TopAppSearchBar = ({ navigation, bookdata={}, search='' }) => {
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
 
-    const openMenu = () => { setVisible(true); console.log("menu opened") }
+    const openMenu = () => { setVisible(true); console.log("menu opened"); dispatch({type: 'search', text: search}) }
     const closeMenu = () => { setVisible(false); console.log("closed") }
     const resetPage = () => {
         setVisible(false)

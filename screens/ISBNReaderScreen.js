@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Camera, CameraView } from 'expo-camera'
 import { Button } from 'react-native-paper'
 
-const ISBNReaderScreen = () => {
+const ISBNReaderScreen = ({navigation}) => {
 
 
     const [hasPermission, setHasPermission] = useState(null)
@@ -24,6 +24,7 @@ const ISBNReaderScreen = () => {
         setScanned(true)
         setText(data)
         console.log("Data: " + data)
+        navigation.popTo('BookSearchPage', {search: data})
     }
 
     if (hasPermission === null) {

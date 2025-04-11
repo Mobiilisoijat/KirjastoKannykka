@@ -14,6 +14,7 @@ export default function BookSearchPage({ navigation }) {
   const URL = "https://api.finna.fi/v1/search?page=1&filter[]=~format:%220/Book/%22&limit=5"
   const [bookListData, setBookListData] = useState({})
   const [showcaseData, setShowcaseData] = useState({})
+  const [search, setSearch] = useState(navigation.params?.text)
   const bookUpdate = (object) => {
     setBookListData(object.records)
   }
@@ -32,7 +33,7 @@ export default function BookSearchPage({ navigation }) {
       <MenuProvider>
         <SafeAreaView>
           <View style={{height: Dimensions.get("window").height}}>
-            <TopAppSearchBar navigation={navigation} bookdata={bookUpdate} />
+            <TopAppSearchBar navigation={navigation} bookdata={bookUpdate} search={search} />
             
             {!bookListData ? (
               <View>

@@ -11,7 +11,7 @@ import BooklistScreen from './screens/BooklistScreen';
 import BookInfo from './screens/BookInfo';
 import BottomTab from './components/BottomBar';
 import FeedbackScreen from './screens/FeedbackScreen';
-import ISBNReaderScreen from './screens/isbnReaderScreen';
+import ISBNReaderScreen from './screens/ISBNReaderScreen';
 
 const Stack = createNativeStackNavigator();
 
