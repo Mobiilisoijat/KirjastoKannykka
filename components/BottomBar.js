@@ -43,7 +43,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="Aktiviteetti"
-        component={ChatbotScreen}
+        component={Testi}
         options={{
           title: "Aktiviteetti",
           tabBarIcon: ({color, size}) => <AntDesign name="bells" color={color} size={size}/>
