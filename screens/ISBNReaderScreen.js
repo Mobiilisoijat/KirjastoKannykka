@@ -5,7 +5,6 @@ import { Button } from 'react-native-paper'
 
 const ISBNReaderScreen = ({navigation}) => {
 
-
     const [hasPermission, setHasPermission] = useState(null)
     const [scanned, setScanned] = useState(false)
     const [text, setText] = useState('not yet scanned')
@@ -23,7 +22,7 @@ const ISBNReaderScreen = ({navigation}) => {
     const handleisbnCodeScanned = ({ data }) => {
         setScanned(true)
         setText(data)
-        console.log("Data: " + data)
+        console.log("ISBN Data: " + data)
         navigation.popTo('BookSearchPage', {search: data})
     }
 

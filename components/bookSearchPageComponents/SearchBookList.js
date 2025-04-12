@@ -2,7 +2,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native'
 import React from 'react'
 import SearchBookListItem from './SearchBookListItem'
 
-const SearchBookList = ({navigation, data}) => {
+const SearchBookList = ({data}) => {
 
   return (
     <View styles={styles.container}>
@@ -11,7 +11,7 @@ const SearchBookList = ({navigation, data}) => {
       data = {data}
       keyExtractor={item => item.id}
       renderItem={({item}) => (
-      <SearchBookListItem navigation={navigation} item={item}/>
+      <SearchBookListItem item={item}/>
     )}
       />
 

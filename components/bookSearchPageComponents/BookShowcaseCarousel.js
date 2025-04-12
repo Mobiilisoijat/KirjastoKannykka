@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet, FlatList, Pressable, Image } from 'react-native'
 import React from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
 
-const BookShowcaseCarousel = ({navigation, data}) => {
+const BookShowcaseCarousel = ({ data }) => {
+  const navigation = useNavigation()
   return (
     <View style={styles.container}>
 

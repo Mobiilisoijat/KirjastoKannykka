@@ -3,13 +3,15 @@ import React, { useEffect, useReducer, useRef, useState, } from 'react'
 import { Searchbar, Button, Menu } from 'react-native-paper'
 import { SearchBarReducer, initialState } from '../redux/SearchBarReducer'
 import { FIREBASE_AUTH } from '../firebase/Config'
+import { useNavigation } from '@react-navigation/native'
 
-const TopAppSearchBar = ({ navigation, bookdata={}, search='' }) => {
+const TopAppSearchBar = ({ bookdata={}, search='' }) => {
+    const navigation = useNavigation()
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
-
-    const openMenu = () => { setVisible(true); console.log("menu opened"); dispatch({type: 'search', text: search}) }
+    
+    const openMenu = () => { setVisible(true); console.log("menu opened"); searchBooks(search); console.log(search) }
     const closeMenu = () => { setVisible(false); console.log("closed") }
     const resetPage = () => {
         setVisible(false)
@@ -21,37 +23,36 @@ const TopAppSearchBar = ({ navigation, bookdata={}, search='' }) => {
             bookdata({})
         })*/
     }
-    
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener('focus', () => {
-    //         setTest("");
-    //     })
 
-    //     return unsubscribe
-    //     console.log("Search cleared!")
-    // },[navigation])
+    useEffect(() => {
+        searchBooks(search)
+    }, [])
+
 
 
     const searchBooks = (text) => {
         dispatch({ type: 'search', text: text })
+        console.log("searchbooks called")
 
         if (controllerRef.current) {    //Abort controller setups: Aborts an old API-call, 
             controllerRef.current.abort() // if there is a new call incoming before the old one gets to finish. 
         }
         controllerRef.current = new AbortController()
         const signal = controllerRef.current.signal
-        if (state.search.length > 1) {
-             const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${state.search.replace(/\s/g,'+')}&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
-            fetch(searchURL, { signal })
-                .then(response => response.json())
-                .then((json) => {
-                    json === null ? bookdata({}) : bookdata(json)
-                }).catch((error) => {
-                    console.log(error)
-                })
-        } else {
-            bookdata({})
-        }
+        if (text.length > 1) {
+            const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${text.replace(/\s/g,'+')}+&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
+           fetch(searchURL,{signal})
+               .then(response => response.json())
+               .then((json) => {
+                   json === null ? bookdata({}) : bookdata(json)
+               }).catch((error) => {
+                   console.log(error)
+               })
+       } else {
+           bookdata({})
+       }
+
+        
 
     }
 

@@ -9,17 +9,18 @@ import { PaperProvider } from 'react-native-paper'
 import SearchBookList from '../components/bookSearchPageComponents/SearchBookList'
 
 
-export default function BookSearchPage({ navigation }) {
+export default function BookSearchPage({ route }) {
   const TESTURL = "https://api.finna.fi/api/v1/search?lookfor=harri_po&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi"
   const URL = "https://api.finna.fi/v1/search?page=1&filter[]=~format:%220/Book/%22&limit=5"
   const [bookListData, setBookListData] = useState({})
   const [showcaseData, setShowcaseData] = useState({})
-  const [search, setSearch] = useState(navigation.params?.text)
+  const [search, setSearch] = useState(route.params?.search)
   const bookUpdate = (object) => {
     setBookListData(object.records)
   }
   useEffect(() => {
-    bookUpdate({search: navigation.params?.search})
+    console.log("ISBN route params:", route.params?.search)
+    bookUpdate({search: route.params})
     fetch(URL)
     .then(response => response.json())
     .then((json) => {
@@ -34,14 +35,14 @@ export default function BookSearchPage({ navigation }) {
       <MenuProvider>
         <SafeAreaView>
           <View style={{height: Dimensions.get("window").height}}>
-            <TopAppSearchBar navigation={navigation} bookdata={bookUpdate} search={search} />
+            <TopAppSearchBar bookdata={bookUpdate} search={search} />
             
             {!bookListData ? (
               <View>
-                <BookShowcaseCarousel navigation={navigation} data={showcaseData}/>
-                <BookShowcaseList navigation={navigation} data={showcaseData}/>
+                <BookShowcaseCarousel data={showcaseData}/>
+                <BookShowcaseList data={showcaseData}/>
               </View>
-            ) : <SearchBookList navigation={navigation} data={bookListData}/>
+            ) : <SearchBookList data={bookListData}/>
             }
           </View>
         </SafeAreaView>
