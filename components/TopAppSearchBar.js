@@ -11,8 +11,15 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
     
-    const openMenu = () => { setVisible(true); console.log("menu opened"); searchBooks(search); console.log(search) }
-    const closeMenu = () => { setVisible(false); console.log("closed") }
+    const openMenu = () => { 
+        setVisible(true)
+        console.log("menu opened")
+        console.log(search) 
+    }
+    const closeMenu = () => { 
+        setVisible(false)
+        console.log("closed") 
+    }
     const resetPage = () => {
         setVisible(false)
         dispatch({ type: 'search', text: '' })
@@ -39,12 +46,12 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
         }
         controllerRef.current = new AbortController()
         const signal = controllerRef.current.signal
-        if (text.length > 1) {
+        if (text.length > 1) {         //Search replaces spaces with a '+', making the search work better (uri would otherwise just remove the spaces, typically they need to be converted to uri-suitable format)
             const searchURL = `https://api.finna.fi/api/v1/search?lookfor=${text.replace(/\s/g,'+')}+&type=AllFields&filter[]=~format:%220/Book/%22&sort=relevance&page=1&limit=20&prettyPrint=false&lng=fi`
            fetch(searchURL,{signal})
                .then(response => response.json())
                .then((json) => {
-                   json === null ? bookdata({}) : bookdata(json)
+                   json === null ? bookdata({}) : bookdata(json) //If result is null, insert empty object into bookdata, otherwise insert data
                }).catch((error) => {
                    console.log(error)
                })
@@ -72,15 +79,10 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
                 onDismiss={closeMenu}
                 anchor={<Button onPress={openMenu} disabled={true}></Button>}>
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BookSearchPage', initial: false }); resetPage() }} title="Koti" />
-                <Menu.Item onPress={() => { navigation.navigate('BookInfo'); resetPage() }} title="BookInfo Example" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false }); resetPage() }} title="Kirjalista" />
-                <Menu.Item onPress={() => { 
-                    navigation.navigate('ISBNReaderScreen');
-                    resetPage() 
-                }} title="Lue ISBN koodi" />
+                <Menu.Item onPress={() => { navigation.navigate('ISBNReaderScreen'); resetPage() }} title="Lue ISBN koodi" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Kaverit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Viestit" />
-                <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Menu item" />
                 <Menu.Item onPress={() => { closeMenu() }} leadingIcon="weather-sunny" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'Profile', initial: false }); resetPage() }} title="Profiili" />
                 <Menu.Item onPress={() => { navigation.navigate('FeedbackScreen'); resetPage() }} title="Käyttäjäpalaute" />
