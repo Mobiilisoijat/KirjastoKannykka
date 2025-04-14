@@ -35,8 +35,8 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
     const searchBooks = (text) => {
         dispatch({ type: 'search', text: text })
 
-        if (controllerRef.current) {    //Abort controller setups: Aborts an old API-call, 
-            controllerRef.current.abort() // if there is a new call incoming before the old one gets to finish. 
+        if (controllerRef.current) {    //Abort controller setups: Aborts an old API-call,
+            controllerRef.current.abort() // if there is a new call incoming before the old one gets to finish.
         }
         controllerRef.current = new AbortController()
         const signal = controllerRef.current.signal
@@ -78,6 +78,7 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Viestit" />
                 <Menu.Item onPress={() => { navigation.navigate('BookRecommendScreen'); resetPage() }} title="Kirjasuosittelu" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Menu item" />
+                <Menu.Item onPress={() => { navigation.navigate('ChatbotScreen'); resetPage() }} title="KirjaBotti" />
                 <Menu.Item onPress={() => { closeMenu() }} leadingIcon="weather-sunny" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'Profile', initial: false }); resetPage() }} title="Profiili" />
                 <Menu.Item onPress={() => { navigation.navigate('FeedbackScreen'); resetPage() }} title="Käyttäjäpalaute" />
@@ -85,7 +86,7 @@ const TopAppSearchBar = ({ navigation, bookdata={} }) => {
                 <Menu.Item onPress={() => { FIREBASE_AUTH.signOut(); resetPage() }} title="Kirjaudu ulos" />
             </Menu>
         </View>
-        
+
     )
 
 }
