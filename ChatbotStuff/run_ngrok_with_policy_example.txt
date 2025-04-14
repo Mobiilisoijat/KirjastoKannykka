@@ -1,0 +1,1 @@
+ngrok http 3000 --url=<YOUR_DOMAIN> --traffic-policy-file=/path/to/policy.yaml
