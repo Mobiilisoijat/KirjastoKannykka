@@ -1,6 +1,6 @@
 import react, { useEffect, useRef, useState } from "react";
 import { ScrollView, View, Linking, Image } from "react-native";
-import { Button, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton } from "react-native-paper";
+import { Button, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog } from "react-native-paper";
 import { LLM_API_URL, LLM_PASSWORD, LLM_USER } from "../firebase/Config";
 
 function ChatbotScreen() {
@@ -14,6 +14,10 @@ function ChatbotScreen() {
   const [quizes, setQuizes] = useState([])
   const quiz = useRef("")
   const answer = useRef("")
+  const userQuizScore = useRef(0)
+  const quizesAnswered = useRef(0)
+  const maxScore = useRef(0)
+  const [dialogVisible, setDialogVisible] = useState(false)
 
   useEffect(() => {
     // we don't want to use web search when generating image
@@ -26,12 +30,10 @@ function ChatbotScreen() {
     let webLinks = []
     let memory
 
-    console.log("state", state)
-
     // personality of the chatbot
     switch(state) {
       case 'quiz':
-        memory = "I am a quiz-loving chatbot named 'KirjaBotti'. I always generate one true/false question from the given prompt. I must end my response with **exactly one** answer inside a list: either [True] or [False]. If I don't understand the prompt, I must respond with [null]. I must never use [True, False] or any other variation."
+        memory = "I am a quiz-loving chatbot named 'KirjaBotti'. I always generate one true/false question from the given prompt. I must end my response with **exactly one** answer inside a list: either [true] or [false]. If I don't understand the prompt, I must respond with [null]. I must never use [True/False] or any other variation."
         break
       case 'internet':
         memory = "I am a chatbot named 'KirjaBotti'. I enjoy helping people and I have a happy attitude. However if user makes mean comments towards me, my attitude will change — I will remind the user to act positively. I often end my sentence with an emoji."
@@ -75,13 +77,20 @@ function ChatbotScreen() {
       const json = await res.json()
       //console.log(`prompt ${text} \n`)
       //console.log(json)
-      let question = json.response.split(/(?=\[)/)[0]
-      quiz.current = question
-      let tempanswer = json.response.split(/(?=\[)/)[1]
-      answer.current = tempanswer
-      //console.log(answer)
-      //console.log(json.response.split(/(?=\[)/))
-      setResponseText(json.response)
+      if (state === "quiz") {
+        // getting the value inside [] from string
+        let question = json.response.split(/(?=\[)/)[0]
+        quiz.current = question
+        let tempanswer = json.response.split(/(?=\[)/)[1]
+        const wordImean = tempanswer.match(/true|false|null/g) // strips stuff like ** from **[false]**
+        console.log("word:", wordImean)
+        console.log("wordImean", wordImean)
+        answer.current = wordImean
+        if (wordImean[0]=== "true" || wordImean[0] == "false") {
+          maxScore.current += 1
+        }
+      } else setQuizes([])
+      state != "quiz" ? setResponseText(json.response) : setResponseText("Here are few questions for you!🔥")
     } catch (error) {
       console.log('fetch error', error)
     }
@@ -92,12 +101,16 @@ function ChatbotScreen() {
   }
 
   const quizMaker = async () => {
-    const idiot = ["harry potter.", "london.", "julio foolio"] // test questions
+    // we reset all values related to score
+    userQuizScore.current = 0
+    quizesAnswered.current = 0
+    maxScore.current = 0
+    const idiot = ["harry potter.", "london.", "uuga buuga", "super monkey ball"] // test questions, uuga buuga is null
     const newQuizes = []
-    for (let i of idiot) {
+    for (let i in idiot) {
       console.log(i)
-      await fetchFunction(i, 'quiz')
-      newQuizes.push({ quiz: quiz.current, answer: answer.current })
+      await fetchFunction(idiot[i], 'quiz')
+      newQuizes.push({ id: i, quiz: quiz.current, answer: answer.current, disabled: false })
     }
     setQuizes(newQuizes)
     newQuizes.forEach(i => console.log("!", i))
@@ -125,7 +138,6 @@ function ChatbotScreen() {
           return
         }
         const json = await res.json()
-        //console.log(json[0])
         webResultText = json[0].desc + json[0].content + json[1].desc + json[1].content + json[2].desc + json[2].content
         //console.log("webResult: ", webResultText)
         webLinks.push(json[0].url, json[1].url, json[2].url)
@@ -193,9 +205,38 @@ function ChatbotScreen() {
     setText("")
   }
 
+  const answerChecker = (question, correctTrue) => {
+    let anwser = correctTrue ?  "true" : "false"
+
+    if (question.answer[0] === anwser) {
+      console.log("OIKEIN!")
+      userQuizScore.current += 1
+    } else{
+      console.log("VÄÄRIN!")
+    }
+    // updates the quizes. does a rerender while doing that
+    setQuizes(quizes.map((item) => {
+      if (item.id === question.id) {
+        return {...item, disabled: true}
+      }
+      else {
+        return item
+      }
+    }))
+
+    quizesAnswered.current += 1
+
+    if (quizesAnswered.current === maxScore.current) setDialogVisible(true)
+
+    console.log("pisteesi:", userQuizScore, "vastaukset:", quizesAnswered, "max pisteet:", maxScore)
+  }
+
   return(
     <PaperProvider>
       <View style={{flex: 1}}>
+        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
+          <Dialog.Title>Sinä teit sen...hurraa!</Dialog.Title>
+        </Dialog>
         <View style={{}}>
           <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
             <Avatar.Icon size={32} icon="robot"/>
@@ -210,10 +251,41 @@ function ChatbotScreen() {
                 <Text key={index} style={{color: "blue", paddingTop: 4, paddingBottom: 4}} onPress={() => Linking.openURL(link)}>{link.substring(0, 20)}...</Text>
               ))
             }
-            <Text>??????????????????????????????????????????????????????????</Text>
+            <Divider/>
             {
               quizes.map((object, index) => {
-                return <Text key={index}>{object.quiz} | {object.answer}</Text>
+                // we dont want questions where the answer is null
+                if (object.answer[0] === "null"){
+                  return
+                }
+                // we add 1 to the max score
+                //maxScore.current += 1
+
+                return (
+                  <View key={index}>
+                    <Text>{object.quiz} A: {object.answer}</Text>
+                    <View style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'center'}}>
+                      <Button
+                        mode="contained"
+                        disabled={object.disabled}
+                        onPress={() => {
+                          answerChecker(object, true)
+                        }}
+                      >
+                        Tosi
+                      </Button>
+                      <Button
+                        mode="contained"
+                        disabled={object.disabled}
+                        onPress={() => {
+                          answerChecker(object, false)
+                        }}
+                      >
+                        Epätosi
+                      </Button>
+                    </View>
+                  </View>
+                )
               })
             }
             <Image
@@ -270,7 +342,7 @@ function ChatbotScreen() {
               buttonOff && !imgCreationEnabled
               &&
               <Button
-                onPress={abortFunction}
+                onPress={() => {abortFunction; setButtonOff(false)}}
               >
                 peruuta
               </Button>
