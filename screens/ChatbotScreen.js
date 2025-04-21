@@ -1,7 +1,9 @@
 import react, { useEffect, useRef, useState } from "react";
 import { ScrollView, View, Linking, Image } from "react-native";
-import { Button, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog } from "react-native-paper";
-import { LLM_API_URL, LLM_PASSWORD, LLM_USER } from "../firebase/Config";
+import { Button, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog, Portal } from "react-native-paper";
+import { LLM_API_URL, LLM_PASSWORD, LLM_USER, USERS, FIREBASE_DB, FAVORITES } from "../firebase/Config";
+import { getDocs, query, collection } from "firebase/firestore";
+import { getAuth } from 'firebase/auth'
 
 function ChatbotScreen() {
   const [text, setText] = useState("")
@@ -18,11 +20,40 @@ function ChatbotScreen() {
   const quizesAnswered = useRef(0)
   const maxScore = useRef(0)
   const [dialogVisible, setDialogVisible] = useState(false)
+  const [bookNames, setBookNames] = useState(["Harry Potter", "Seitsemän Veljestä", "Risto Räppääjä"])
 
   useEffect(() => {
     // we don't want to use web search when generating image
     imgCreationEnabled && setWebSearch(false)
   })
+
+  const auth = getAuth()
+  const user = auth.currentUser
+  let docsRef
+
+  // check if user is logged in
+  if (user && user.uid){
+    docsRef = query(collection(FIREBASE_DB, USERS, user.uid, FAVORITES))
+  }
+  const firebaseGetData = async () => {
+    try {
+      if (user.uid) {
+        const querySnap = await getDocs(docsRef)
+        console.log("length:", querySnap.size)
+        let tempArray = []
+        querySnap.forEach((doc) => {
+          console.log(doc.data().title)
+          tempArray.push(doc.data().title)
+        })
+        setBookNames(tempArray)
+        bookNames.forEach(i => console.log(i))
+      } else {
+        console.log("No data found!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const fetchFunction = async (text, state) => {
     setWebLink([]) // we want this to be empty
@@ -32,8 +63,11 @@ function ChatbotScreen() {
 
     // personality of the chatbot
     switch(state) {
-      case 'quiz':
+      case 'quizBooks':
         memory = "I am a quiz-loving chatbot named 'KirjaBotti'. I always generate one true/false question from the given prompt. I must end my response with **exactly one** answer inside a list: either [true] or [false]. If I don't understand the prompt, I must respond with [null]. I must never use [True/False] or any other variation."
+        const res1 = await webSearcher(text)
+        webLinks = res1.webLinks
+        webResultText = res1.webResultText
         break
       case 'internet':
         memory = "I am a chatbot named 'KirjaBotti'. I enjoy helping people and I have a happy attitude. However if user makes mean comments towards me, my attitude will change — I will remind the user to act positively. I often end my sentence with an emoji."
@@ -55,7 +89,7 @@ function ChatbotScreen() {
         },
         body: JSON.stringify({
           // for Kobold
-          "memory": "I only talk in English.", memory,
+          "memory": memory,
           "prompt": `${webResultText}. ${text}`,
           "max_tokens": 50,
           "temperature": 0.2, // 0 - 1. Higher being more creative.
@@ -77,27 +111,32 @@ function ChatbotScreen() {
       const json = await res.json()
       //console.log(`prompt ${text} \n`)
       //console.log(json)
-      if (state === "quiz") {
+      if (state === "quizBooks") {
         // getting the value inside [] from string
+        //console.log("JSON", json)
         let question = json.response.split(/(?=\[)/)[0]
-        quiz.current = question
         let tempanswer = json.response.split(/(?=\[)/)[1]
         const wordImean = tempanswer.match(/true|false|null/g) // strips stuff like ** from **[false]**
-        console.log("word:", wordImean)
-        console.log("wordImean", wordImean)
-        answer.current = wordImean
         if (wordImean[0]=== "true" || wordImean[0] == "false") {
           maxScore.current += 1
         }
+        ////////////////////////////////
+        console.log("REACHED HERE")
+        console.log(question)
+        console.log(wordImean)
+        quiz.current = question
+        answer.current = wordImean
       } else setQuizes([])
-      state != "quiz" ? setResponseText(json.response) : setResponseText("Here are few questions for you!🔥")
+      state != "quizBooks" ? setResponseText(json.response) : setResponseText("Here are few questions for you!🔥")
     } catch (error) {
       console.log('fetch error', error)
+      return
     }
     setButtonOff(false)
-    setWebLink(webLinks)
+    state === 'internet' && setWebLink(webLinks)
     setImage("")
     setText("")
+    return true
   }
 
   const quizMaker = async () => {
@@ -105,15 +144,21 @@ function ChatbotScreen() {
     userQuizScore.current = 0
     quizesAnswered.current = 0
     maxScore.current = 0
-    const idiot = ["harry potter.", "london.", "uuga buuga", "super monkey ball"] // test questions, uuga buuga is null
+    //const idiot = ["harry potter.", "european city.", "uuga buuga", "super monkey ball"] // test questions, uuga buuga is null
     const newQuizes = []
-    for (let i in idiot) {
-      console.log(i)
-      await fetchFunction(idiot[i], 'quiz')
-      newQuizes.push({ id: i, quiz: quiz.current, answer: answer.current, disabled: false })
+    for (let i in bookNames) {
+      const result = await fetchFunction(bookNames[i], 'quizBooks')
+      if (result === true) {
+        newQuizes.push({ id: i, quiz: quiz.current, answer: answer.current, disabled: false, correct: null })
+      }
     }
     setQuizes(newQuizes)
     newQuizes.forEach(i => console.log("!", i))
+    setButtonOff(false)
+  }
+
+  const quizEnded = () => {
+    setResponseText(`You got ${userQuizScore.current} right from ${maxScore.current} questions!`)
   }
 
   const webSearcher = async (text) => {
@@ -138,9 +183,12 @@ function ChatbotScreen() {
           return
         }
         const json = await res.json()
-        webResultText = json[0].desc + json[0].content + json[1].desc + json[1].content + json[2].desc + json[2].content
-        //console.log("webResult: ", webResultText)
-        webLinks.push(json[0].url, json[1].url, json[2].url)
+        //console.log("json lenght", json.length)
+        const jsonLength = json.length
+        for (let i = 0; i < jsonLength; i++) {
+          webResultText += json[i].desc + json[i].content
+          webLinks.push(json[i].url)
+        }
         webLinks.forEach(i => console.log(i))
         return { webLinks, webResultText }
       } catch (error) {
@@ -206,18 +254,21 @@ function ChatbotScreen() {
   }
 
   const answerChecker = (question, correctTrue) => {
-    let anwser = correctTrue ?  "true" : "false"
+    let anwser = correctTrue ?  "true" : "false" // changes to string
+    let correct
 
     if (question.answer[0] === anwser) {
       console.log("OIKEIN!")
+      correct = true
       userQuizScore.current += 1
     } else{
       console.log("VÄÄRIN!")
+      correct = false
     }
     // updates the quizes. does a rerender while doing that
     setQuizes(quizes.map((item) => {
       if (item.id === question.id) {
-        return {...item, disabled: true}
+        return {...item, disabled: true, correct: correct}
       }
       else {
         return item
@@ -234,9 +285,18 @@ function ChatbotScreen() {
   return(
     <PaperProvider>
       <View style={{flex: 1}}>
-        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
-          <Dialog.Title>Sinä teit sen...hurraa!</Dialog.Title>
-        </Dialog>
+        <Portal>
+          <Dialog visible={dialogVisible} onDismiss={() => {setDialogVisible(false); quizEnded()}}>
+            <Dialog.Title>Suoritit visa pelin!</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">Pisteesi: {userQuizScore.current}</Text>
+              <Text variant="bodyMedium">Max pisteet: {maxScore.current}</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => {setDialogVisible(false); quizEnded()}}>Jatka</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
         <View style={{}}>
           <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
             <Avatar.Icon size={32} icon="robot"/>
@@ -244,6 +304,7 @@ function ChatbotScreen() {
           </View>
           <ScrollView style={{margin: 4}} contentContainerStyle={{paddingBottom: 100}}>
             <Text>{responseText}</Text>
+            <Button onPress={firebaseGetData}>www</Button>
             {
               (webLink.length != undefined && webLink.length > 0)
               &&
@@ -263,7 +324,7 @@ function ChatbotScreen() {
 
                 return (
                   <View key={index}>
-                    <Text>{object.quiz} A: {object.answer}</Text>
+                    <Text>{object.quiz}</Text>
                     <View style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'center'}}>
                       <Button
                         mode="contained"
@@ -283,6 +344,13 @@ function ChatbotScreen() {
                       >
                         Epätosi
                       </Button>
+                      <Text>
+                        {
+                          object.correct != null
+                          &&
+                          (object.correct ? "✅" : "❌")
+                        }
+                      </Text>
                     </View>
                   </View>
                 )
@@ -360,7 +428,7 @@ function ChatbotScreen() {
             <ToggleButton
               disabled={buttonOff}
               icon={"microsoft-xbox-controller"} //"microsoft-xbox-controller-off
-              onPress={() => quizMaker() }
+              onPress={() => { setWebSearch(true); console.log("OK"); setButtonOff(true); quizMaker() }}
             />
           </View>
           <TextInput

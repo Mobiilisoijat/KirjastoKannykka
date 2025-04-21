@@ -3,6 +3,7 @@ import BookSearchPage from "../screens/BookSearchPage";
 import Testi from "../screens/Testi";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import BooklistScreen from "../screens/BooklistScreen";
+import ChatbotScreen from "../screens/ChatbotScreen";
 
 const Tab = createBottomTabNavigator()
 
@@ -41,7 +42,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="Aktiviteetti"
-        component={Testi}
+        component={ChatbotScreen}
         options={{
           title: "Aktiviteetti",
           tabBarIcon: ({color, size}) => <AntDesign name="bells" color={color} size={size}/>
