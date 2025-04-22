@@ -3,6 +3,7 @@ import BookSearchPage from "../screens/BookSearchPage";
 import Testi from "../screens/Testi";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import BooklistScreen from "../screens/BooklistScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import StatisticsScreen from "../screens/StatisticsScreen";
 import ChatbotScreen from "../screens/ChatbotScreen";
 
@@ -35,7 +36,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="Profile"
-        component={Testi}
+        component={ProfileScreen}
         options={{
           title: "Profiili",
           tabBarIcon: ({color, size}) => <AntDesign name="user" color={color} size={size}/>
