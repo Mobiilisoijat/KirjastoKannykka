@@ -9,6 +9,12 @@ import BookSearchPage from './screens/BookSearchPage';
 import BooklistScreen from './screens/BooklistScreen';
 import BookInfo from './screens/BookInfo';
 import BottomTab from './components/BottomBar';
+import FeedbackScreen from './screens/FeedbackScreen';
+import ISBNReaderScreen from './screens/ISBNReaderScreen';
+import BookRecommendScreen from './screens/BookRecommendScreen';
+import ChatbotScreen from './screens/ChatbotScreen';
+import ReadingSessionScreen from './screens/ReadingSessionScreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -21,9 +27,14 @@ function InsideLayout() {
       <InsideStack.Screen name="Tabs" component={BottomTab} options={{ headerShown: false }} />
       {/* Other navigation paths*/}
       <InsideStack.Screen name="BookSearchPage" component={BookSearchPage} options={{ headerShown: false }} />
+      <InsideStack.Screen name="ChatbotScreen" component={ChatbotScreen} />
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="FeedbackScreen" component={FeedbackScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="BookRecommendScreen" component={BookRecommendScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Testi" component={Testi} />
       <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "anders.1970703"}}/>
+      <InsideStack.Screen name="ISBNReaderScreen" component={ISBNReaderScreen} />
+      <InsideStack.Screen name="ReadingSessionScreen" component={ReadingSessionScreen} />
     </InsideStack.Navigator>
   );
 }

@@ -16,20 +16,24 @@ export default function LikeButton( { bookId, bookInfo } ) {
     docRef = doc(FIREBASE_DB, USERS, user.uid, FAVORITES, bookId)
   }
 
-  const firebaseDataGet = async () => {
-    if (user.uid) {
-      const docSnap = await getDoc(docRef)
-      if (docSnap.exists()) {
-        const isLiked = docSnap.data().liked
-        if (isLiked === true) {
-          setFavourite(isLiked)
+  const firebaseGetData = async () => {
+    try {
+      if (user.uid) {
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          const isLiked = docSnap.data().liked
+          if (isLiked === true) {
+            setFavourite(isLiked)
+          }
+          //console.log("Document data:", docSnap.data());
+        } else {
+          console.log("No such document!");
         }
-        //console.log("Document data:", docSnap.data());
       } else {
-        console.log("No such document!");
+        console.log("No uid")
       }
-    } else {
-      console.log("No uid")
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -57,7 +61,7 @@ export default function LikeButton( { bookId, bookInfo } ) {
   }
 
   useEffect(() => {
-    firebaseDataGet()
+    firebaseGetData()
   }, []);
 
   const favouriteHandler = () => {
