@@ -14,6 +14,7 @@ import FeedbackScreen from './screens/FeedbackScreen';
 import ISBNReaderScreen from './screens/ISBNReaderScreen';
 import BookRecommendScreen from './screens/BookRecommendScreen';
 import ChatbotScreen from './screens/ChatbotScreen';
+import ReadingSessionScreen from './screens/ReadingSessionScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +36,7 @@ function InsideLayout() {
       <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
       <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "anders.1970703"}}/>
       <InsideStack.Screen name="ISBNReaderScreen" component={ISBNReaderScreen} />
+      <InsideStack.Screen name="ReadingSessionScreen" component={ReadingSessionScreen} />
     </InsideStack.Navigator>
   );
 }
