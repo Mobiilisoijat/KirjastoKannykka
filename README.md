@@ -7,7 +7,7 @@ Our application uses Finna's services to make searches for books. These books ca
 
 Kirjastokännykkä has a readinglist (lukulista) to keep you on track, which books you have read. By making a search and selecting your desired book, you see more details of the book. You can then add the book to the reading list as 'completed', 'reading' or 'planning'. You may also leave a review on the book from this page.
 
-Readers can enter Finnish libraries with our application! (allegedly) Using a QR-code generated for the user, you may enter a library (allegedly) by showing it to the reader.
+Readers can enter Finnish libraries with our application! (allegedly) Using a QR-code generated for the user, you may enter a library (allegedly) by showing it to the reader. Our VAC -service handles library access needs: https://github.com/Mobiilisoijat/VAC
 
 If our users are lonely our companion KirjaBotti may soothe you. With this chatBot you can ask questions about books, generate images or even play a quiz-game with. 
 
