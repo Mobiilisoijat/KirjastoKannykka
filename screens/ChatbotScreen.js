@@ -1,26 +1,30 @@
 import react, { useEffect, useRef, useState } from "react";
 import { ScrollView, View, Linking, Image } from "react-native";
-import { Button, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog, Portal } from "react-native-paper";
+import { Button, Menu, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog, Portal } from "react-native-paper";
 import { LLM_API_URL, LLM_PASSWORD, LLM_USER, USERS, FIREBASE_DB, FAVORITES } from "../firebase/Config";
 import { getDocs, query, collection } from "firebase/firestore";
 import { getAuth } from 'firebase/auth'
 
 function ChatbotScreen() {
+  // so many states but realy no time for cleaning
   const [text, setText] = useState("")
   const [webLink, setWebLink] = useState("")
-  const [responseText, setResponseText] = useState("Hei, olen KirjaBotti ja tiedän kaikenlaista kirjoista! Kirjoita kysymykset mielellään englanniksi, kun kysyt minulta jotain!😄 Vain hakea internetistä tietoa, generoida kuvia ja tehdä sinulle henkilökohtaisen quiz pelin!")
+  const [responseText, setResponseText] = useState("Hei, olen KirjaBotti ja tiedän kaikenlaista kirjoista! Kirjoita kysymykset mielellään englanniksi, kun kysyt minulta jotain!😄 Vain hakea internetistä tietoa, generoida kuvia ja tehdä sinulle henkilökohtaisen visa pelin!")
   const [buttonOff, setButtonOff] = useState(false)
   const [webSearch, setWebSearch] = useState(false)
   const [img, setImage] = useState("")
   const [imgCreationEnabled, setImgCreationEnabled] = useState(false)
   const [quizes, setQuizes] = useState([])
+  const [dialogVisible, setDialogVisible] = useState(false)
+  const [bookNames, setBookNames] = useState([])
+  const [menuVisible, setMenuVisible] = useState(false)
+  const [quizesLoading, setQuizesLoading] = useState(false)
+  const [topicText, setTopicText] = useState("")
   const quiz = useRef("")
   const answer = useRef("")
   const userQuizScore = useRef(0)
   const quizesAnswered = useRef(0)
   const maxScore = useRef(0)
-  const [dialogVisible, setDialogVisible] = useState(false)
-  const [bookNames, setBookNames] = useState(["Harry Potter", "Seitsemän Veljestä", "Risto Räppääjä"])
 
   useEffect(() => {
     // we don't want to use web search when generating image
@@ -35,6 +39,7 @@ function ChatbotScreen() {
   if (user && user.uid){
     docsRef = query(collection(FIREBASE_DB, USERS, user.uid, FAVORITES))
   }
+
   const firebaseGetData = async () => {
     try {
       if (user.uid) {
@@ -62,21 +67,28 @@ function ChatbotScreen() {
     let memory
 
     // personality of the chatbot
+    const personalityGeneral = "I am a chatbot named 'KirjaBotti'. I enjoy helping people and I have a happy attitude. However if user makes mean comments towards me, my attitude will change — I will remind the user to act positively. I often end my sentence with an emoji."
+    const personalityQuiz = "I am a quiz-loving chatbot named 'KirjaBotti'. I always generate one true/false question from the given prompt. I must end my response with **exactly one** answer inside a list: either [true] or [false]. If I don't understand the prompt, I must respond with [null]. I must never use [True/False] or any other variation."
+
+
     switch(state) {
+      case 'quizGeneral':
+        memory = personalityQuiz
+        break
       case 'quizBooks':
-        memory = "I am a quiz-loving chatbot named 'KirjaBotti'. I always generate one true/false question from the given prompt. I must end my response with **exactly one** answer inside a list: either [true] or [false]. If I don't understand the prompt, I must respond with [null]. I must never use [True/False] or any other variation."
+        memory = personalityQuiz
         const res1 = await webSearcher(text)
         webLinks = res1.webLinks
         webResultText = res1.webResultText
         break
       case 'internet':
-        memory = "I am a chatbot named 'KirjaBotti'. I enjoy helping people and I have a happy attitude. However if user makes mean comments towards me, my attitude will change — I will remind the user to act positively. I often end my sentence with an emoji."
+        memory = personalityGeneral
         const result = await webSearcher(text)
         webLinks = result.webLinks
         webResultText = result.webResultText
         break
       case 'general':
-        memory = "I am a chatbot named 'KirjaBotti'. I enjoy helping people and I have a happy attitude. However if user makes mean comments towards me, my attitude will change — I will remind the user to act positively. I often end my sentence with an emoji. I have a broad knowledge about all kinds of books and can tell information about them. If I dont't know about a book I will tell that I don't have information about it."
+        memory = personalityGeneral + " I have a broad knowledge about all kinds of books and can tell information about them. If I dont't know about a book I will tell that I don't have information about it."
         break
     }
 
@@ -111,48 +123,68 @@ function ChatbotScreen() {
       const json = await res.json()
       //console.log(`prompt ${text} \n`)
       //console.log(json)
-      if (state === "quizBooks") {
-        // getting the value inside [] from string
-        //console.log("JSON", json)
-        let question = json.response.split(/(?=\[)/)[0]
-        let tempanswer = json.response.split(/(?=\[)/)[1]
-        const wordImean = tempanswer.match(/true|false|null/g) // strips stuff like ** from **[false]**
-        if (wordImean[0]=== "true" || wordImean[0] == "false") {
-          maxScore.current += 1
-        }
-        ////////////////////////////////
-        console.log("REACHED HERE")
-        console.log(question)
-        console.log(wordImean)
-        quiz.current = question
-        answer.current = wordImean
-      } else setQuizes([])
-      state != "quizBooks" ? setResponseText(json.response) : setResponseText("Here are few questions for you!🔥")
+
+      // different state handling
+      switch (state) {
+        //both of this run trought the same code
+        case "quizBooks":
+        case "quizGeneral":
+          // getting the value inside [] from string
+          let question = json.response.split(/(?=\[)/)[0]
+          let tempanswer = json.response.split(/(?=\[)/)[1]
+          const wordImean = tempanswer.match(/true|false|null/g) // strips stuff like ** from **[false]**
+          if (wordImean[0]=== "true" || wordImean[0] == "false") {
+            maxScore.current += 1
+          }
+          console.log("question", question)
+          console.log("answer", wordImean)
+          quiz.current = question
+          answer.current = wordImean
+          break
+        case 'internet':
+          setResponseText(json.response)
+          setQuizes([])
+          setWebLink(webLinks)
+          setButtonOff(false)
+          break
+        default:
+          setResponseText(json.response)
+          setQuizes([])
+          break
+      }
+      // extra handeling
+      if (state.startsWith("quiz")) {
+        setResponseText("Here are few questions for you!🔥")
+      } else {
+        setResponseText(json.response)
+        setQuizes([])
+        setButtonOff(false)
+      }
     } catch (error) {
       console.log('fetch error', error)
       return
     }
-    setButtonOff(false)
-    state === 'internet' && setWebLink(webLinks)
     setImage("")
     setText("")
     return true
   }
 
-  const quizMaker = async () => {
+  const quizMaker = async (quizType, topic) => {
     // we reset all values related to score
     userQuizScore.current = 0
     quizesAnswered.current = 0
     maxScore.current = 0
-    //const idiot = ["harry potter.", "european city.", "uuga buuga", "super monkey ball"] // test questions, uuga buuga is null
     const newQuizes = []
-    for (let i in bookNames) {
-      const result = await fetchFunction(bookNames[i], 'quizBooks')
+
+    for (let i in topic) {
+      const result = await fetchFunction(topic[i], quizType)
       if (result === true) {
         newQuizes.push({ id: i, quiz: quiz.current, answer: answer.current, disabled: false, correct: null })
       }
     }
+    setQuizesLoading(false)
     setQuizes(newQuizes)
+    setButtonOff(false)
     newQuizes.forEach(i => console.log("!", i))
     setButtonOff(false)
   }
@@ -218,6 +250,15 @@ function ChatbotScreen() {
     }
   }
 
+  const quizTypeHandler = (quizState, topic) => {
+    setButtonOff(true);
+    setMenuVisible(false)
+    quizMaker(quizState, topic)
+    setQuizesLoading(true)
+    setTopicText("")
+    setText("")
+  }
+
   const imageGenerate = async (text) => {
     setWebLink([]) // we want this to be empty
     try {
@@ -250,6 +291,7 @@ function ChatbotScreen() {
     }
     setResponseText("Here is your image!😊")
     setButtonOff(false)
+    setQuizes([])
     setText("")
   }
 
@@ -286,6 +328,7 @@ function ChatbotScreen() {
     <PaperProvider>
       <View style={{flex: 1}}>
         <Portal>
+
           <Dialog visible={dialogVisible} onDismiss={() => {setDialogVisible(false); quizEnded()}}>
             <Dialog.Title>Suoritit visa pelin!</Dialog.Title>
             <Dialog.Content>
@@ -296,6 +339,38 @@ function ChatbotScreen() {
               <Button onPress={() => {setDialogVisible(false); quizEnded()}}>Jatka</Button>
             </Dialog.Actions>
           </Dialog>
+
+          <Dialog visible={menuVisible} onDismiss={() => setMenuVisible(false)}>
+            <Dialog.Title>Valitse visailu tyyppi!</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">Joko yleiskysymys visa tai suosikkilistastasi visa</Text>
+              <Text variant="bodyMedium">Visa on englanniksi!</Text>
+              <TextInput
+                label={"Syötä aihe (mielellään englanniksi)"}
+                defaultValue={topicText}
+                onChangeText={text => setTopicText(text)}
+                >
+              </TextInput>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button mode="contained" onPress={ () => {
+                // this is pretty hidden. Not a good practice.
+                const topic = [topicText, topicText + " origin of this?"]
+                quizTypeHandler('quizGeneral', topic)
+              }}
+              >
+                Yleiskysymykset
+              </Button>
+              <Button mode="contained" onPress={ async() => {
+                await firebaseGetData()
+
+                quizTypeHandler('quizBooks', bookNames)
+              }}>
+                Suosikkilista
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+
         </Portal>
         <View style={{}}>
           <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
@@ -304,7 +379,6 @@ function ChatbotScreen() {
           </View>
           <ScrollView style={{margin: 4}} contentContainerStyle={{paddingBottom: 100}}>
             <Text>{responseText}</Text>
-            <Button onPress={firebaseGetData}>www</Button>
             {
               (webLink.length != undefined && webLink.length > 0)
               &&
@@ -314,6 +388,10 @@ function ChatbotScreen() {
             }
             <Divider/>
             {
+              quizesLoading
+              ?
+              <ActivityIndicator animating={true} />
+              :
               quizes.map((object, index) => {
                 // we dont want questions where the answer is null
                 if (object.answer[0] === "null"){
@@ -428,7 +506,11 @@ function ChatbotScreen() {
             <ToggleButton
               disabled={buttonOff}
               icon={"microsoft-xbox-controller"} //"microsoft-xbox-controller-off
-              onPress={() => { setWebSearch(true); console.log("OK"); setButtonOff(true); quizMaker() }}
+              onPress={() => {
+                setWebSearch(true);
+                console.log("OK");
+                setMenuVisible(true)
+              }}
             />
           </View>
           <TextInput
