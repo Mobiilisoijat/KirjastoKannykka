@@ -13,6 +13,7 @@ import FeedbackScreen from './screens/FeedbackScreen';
 import ISBNReaderScreen from './screens/ISBNReaderScreen';
 import BookRecommendScreen from './screens/BookRecommendScreen';
 import ChatbotScreen from './screens/ChatbotScreen';
+import QRCodeScreen from './screens/QRCodeScreen';
 import ReadingSessionScreen from './screens/ReadingSessionScreen';
 
 
@@ -34,6 +35,7 @@ function InsideLayout() {
       <InsideStack.Screen name="Testi" component={Testi} />
       <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "anders.1970703"}}/>
       <InsideStack.Screen name="ISBNReaderScreen" component={ISBNReaderScreen} />
+      <InsideStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
       <InsideStack.Screen name="ReadingSessionScreen" component={ReadingSessionScreen} />
     </InsideStack.Navigator>
   );
