@@ -82,6 +82,7 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'BooklistScreen', initial: false }); resetPage() }} title="Kirjalista" />
                 <Menu.Item onPress={() => { navigation.navigate('ISBNReaderScreen'); resetPage() }} title="Lue ISBN koodi" />
                 <Menu.Item onPress={() => { navigation.navigate('QRCodeScreen'); resetPage() }} title="Näytä QR-koodi" />
+                <Menu.Item onPress={() => { navigation.navigate('ReadingSessionScreen'); resetPage() }} title="Lukuhetki" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Kaverit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Viestit" />
                 <Menu.Item onPress={() => { navigation.navigate('BookRecommendScreen'); resetPage() }} title="Kirjasuosittelu" />
