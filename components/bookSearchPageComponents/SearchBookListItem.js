@@ -2,8 +2,11 @@ import { View, Text, Pressable, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import uuid from 'react-native-uuid'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
-const SearchBookListItem = ({ navigation, item }) => {
+const SearchBookListItem = ({ item }) => {
+  const navigation = useNavigation()
+
   return (
     <Pressable onPress={() => navigation.navigate("BookInfo", { bookId: item.id })}>
       <View style={styles.item}>

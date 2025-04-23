@@ -5,13 +5,17 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
 import LoginScreen from './screens/LoginScreen';
 import Testi from './screens/Testi';
-import LogoutTesti from './screens/LogoutTesti';
 import BookSearchPage from './screens/BookSearchPage';
 import BooklistScreen from './screens/BooklistScreen';
 import BookInfo from './screens/BookInfo';
 import BottomTab from './components/BottomBar';
 import FeedbackScreen from './screens/FeedbackScreen';
+import ISBNReaderScreen from './screens/ISBNReaderScreen';
+import BookRecommendScreen from './screens/BookRecommendScreen';
 import ChatbotScreen from './screens/ChatbotScreen';
+import QRCodeScreen from './screens/QRCodeScreen';
+import ReadingSessionScreen from './screens/ReadingSessionScreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -27,9 +31,12 @@ function InsideLayout() {
       <InsideStack.Screen name="KirjaBotti" component={ChatbotScreen} />
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="FeedbackScreen" component={FeedbackScreen} options={{ headerShown: false }} />
+      <InsideStack.Screen name="BookRecommendScreen" component={BookRecommendScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="Testi" component={Testi} />
-      <InsideStack.Screen name="LogoutTesti" component={LogoutTesti} />
       <InsideStack.Screen name="BookInfo" component={BookInfo} initialParams={{bookId: "anders.1970703"}}/>
+      <InsideStack.Screen name="ISBNReaderScreen" component={ISBNReaderScreen} />
+      <InsideStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
+      <InsideStack.Screen name="ReadingSessionScreen" component={ReadingSessionScreen} />
     </InsideStack.Navigator>
   );
 }
