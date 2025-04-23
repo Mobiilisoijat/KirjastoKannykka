@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable } from "react-native";
 import Checkbox from "expo-checkbox";
 import { FIREBASE_DB, BOOKLIST, USERS } from '../firebase/Config'
 import { getAuth } from 'firebase/auth'
-import { Timestamp, doc, getDoc, updateDoc, addDoc, collection, deleteDoc, onSnapshot, query, setDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore'
 
 function ReadingListPopUp ({bookId, book}) {
   //Getting current user from firebase

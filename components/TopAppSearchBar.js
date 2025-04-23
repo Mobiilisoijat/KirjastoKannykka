@@ -10,15 +10,15 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
     const [state, dispatch] = useReducer(SearchBarReducer, initialState)
     const [visible, setVisible] = useState(false)  //show menu when menu-button is pressed
     const controllerRef = useRef()
-    
-    const openMenu = () => { 
+
+    const openMenu = () => {
         setVisible(true)
         console.log("menu opened")
-        console.log(search) 
+        console.log(search)
     }
-    const closeMenu = () => { 
+    const closeMenu = () => {
         setVisible(false)
-        console.log("closed") 
+        console.log("closed")
     }
     const resetPage = () => {
         setVisible(false)
@@ -59,7 +59,7 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
            bookdata({})
        }
 
-        
+
 
     }
 
@@ -86,7 +86,7 @@ const TopAppSearchBar = ({ bookdata={}, search='' }) => {
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Kaverit" />
                 <Menu.Item onPress={() => { navigation.navigate(''); resetPage() }} title="Viestit" />
                 <Menu.Item onPress={() => { navigation.navigate('BookRecommendScreen'); resetPage() }} title="Kirjasuosittelu" />
-                <Menu.Item onPress={() => { navigation.navigate('ChatbotScreen'); resetPage() }} title="KirjaBotti" />
+                <Menu.Item onPress={() => { navigation.navigate('KirjaBotti'); resetPage() }} title="KirjaBotti" />
                 <Menu.Item onPress={() => { closeMenu() }} leadingIcon="weather-sunny" />
                 <Menu.Item onPress={() => { navigation.navigate('Tabs', { screen: 'Profile', initial: false }); resetPage() }} title="Profiili" />
                 <Menu.Item onPress={() => { navigation.navigate('FeedbackScreen'); resetPage() }} title="Käyttäjäpalaute" />

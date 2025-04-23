@@ -28,7 +28,7 @@ function InsideLayout() {
       <InsideStack.Screen name="Tabs" component={BottomTab} options={{ headerShown: false }} />
       {/* Other navigation paths*/}
       <InsideStack.Screen name="BookSearchPage" component={BookSearchPage} options={{ headerShown: false }} />
-      <InsideStack.Screen name="ChatbotScreen" component={ChatbotScreen} />
+      <InsideStack.Screen name="KirjaBotti" component={ChatbotScreen} />
       <InsideStack.Screen name="BooklistScreen" component={BooklistScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="FeedbackScreen" component={FeedbackScreen} options={{ headerShown: false }} />
       <InsideStack.Screen name="BookRecommendScreen" component={BookRecommendScreen} options={{ headerShown: false }} />
