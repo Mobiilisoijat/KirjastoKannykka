@@ -1,11 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BookSearchPage from "../screens/BookSearchPage";
-import Testi from "../screens/Testi";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import BooklistScreen from "../screens/BooklistScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import StatisticsScreen from "../screens/StatisticsScreen";
-import ChatbotScreen from "../screens/ChatbotScreen";
+import StatisticsScreen from "../screens/StatisticsScreen"
 
 const Tab = createBottomTabNavigator()
 
@@ -43,11 +41,11 @@ function BottomBar() {
         }}
       />
       <Tab.Screen
-        name="Aktiviteetti"
-        component={ChatbotScreen}
+        name="Statistiikka"
+        component={StatisticsScreen}
         options={{
-          title: "Aktiviteetti",
-          tabBarIcon: ({color, size}) => <AntDesign name="bells" color={color} size={size}/>
+          title: "Statistiikka",
+          tabBarIcon: ({color, size}) => <AntDesign name="barschart" color={color} size={size}/>
         }}
       />
     </Tab.Navigator>

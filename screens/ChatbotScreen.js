@@ -1,6 +1,6 @@
 import react, { useEffect, useRef, useState } from "react";
 import { ScrollView, View, Linking, Image } from "react-native";
-import { Button, Menu, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog, Portal } from "react-native-paper";
+import { Button, Text, PaperProvider, TextInput, ActivityIndicator, Avatar, ToggleButton, Divider, Dialog, Portal } from "react-native-paper";
 import { LLM_API_URL, LLM_PASSWORD, LLM_USER, USERS, FIREBASE_DB, FAVORITES } from "../firebase/Config";
 import { getDocs, query, collection } from "firebase/firestore";
 import { getAuth } from 'firebase/auth'
@@ -25,11 +25,16 @@ function ChatbotScreen() {
   const userQuizScore = useRef(0)
   const quizesAnswered = useRef(0)
   const maxScore = useRef(0)
+  const likedBooksListLength = useRef(0)
 
   useEffect(() => {
     // we don't want to use web search when generating image
     imgCreationEnabled && setWebSearch(false)
   })
+
+  useEffect(() => {
+    firebaseGetData()
+  }, [])
 
   const auth = getAuth()
   const user = auth.currentUser
@@ -40,14 +45,37 @@ function ChatbotScreen() {
     docsRef = query(collection(FIREBASE_DB, USERS, user.uid, FAVORITES))
   }
 
+  const randomFunction = (likedBooksListLength) => {
+    // list with random numbers
+    let numberArray = []
+    // list for the random numbers picked
+    let finalArray = []
+    for (let i = 0; i < likedBooksListLength; i++) {
+      numberArray.push(i)
+    }
+    // we pick a random number from the list and we remove the number from the list after it is picked
+    // we pick 3 random books from our booklist to generate quizes from
+    for (let i = 0; i < 3; i++) {
+      const n = Math.floor(Math.random() * numberArray.length)
+      const randomNumber = numberArray[n]
+      const index = numberArray.indexOf(randomNumber)
+      numberArray.splice(index, 1)
+      console.log(randomNumber)
+      finalArray.push(randomNumber)
+    }
+
+    numberArray.forEach(i => console.log("im still standing", i))
+    return finalArray
+  }
+
   const firebaseGetData = async () => {
     try {
       if (user.uid) {
         const querySnap = await getDocs(docsRef)
         console.log("length:", querySnap.size)
+        likedBooksListLength.current = querySnap.size
         let tempArray = []
         querySnap.forEach((doc) => {
-          console.log(doc.data().title)
           tempArray.push(doc.data().title)
         })
         setBookNames(tempArray)
@@ -69,7 +97,6 @@ function ChatbotScreen() {
     // personality of the chatbot
     const personalityGeneral = "I am a chatbot named 'KirjaBotti'. I enjoy helping people and I have a happy attitude. However if user makes mean comments towards me, my attitude will change — I will remind the user to act positively. I often end my sentence with an emoji."
     const personalityQuiz = "I am a quiz-loving chatbot named 'KirjaBotti'. I always generate one true/false question from the given prompt. I must end my response with **exactly one** answer inside a list: either [true] or [false]. If I don't understand the prompt, I must respond with [null]. I must never use [True/False] or any other variation."
-
 
     switch(state) {
       case 'quizGeneral':
@@ -152,7 +179,7 @@ function ChatbotScreen() {
           setQuizes([])
           break
       }
-      // extra handeling
+      // extra handling
       if (state.startsWith("quiz")) {
         setResponseText("Here are few questions for you!🔥")
       } else {
@@ -175,6 +202,32 @@ function ChatbotScreen() {
     quizesAnswered.current = 0
     maxScore.current = 0
     const newQuizes = []
+    let bookPickArray
+
+    if (quizType === "quizBooks" && likedBooksListLength.current > 3) {
+      const bookPicks = randomFunction(likedBooksListLength.current)
+      // we create a new array from the random 3 books on our list
+      bookPickArray = bookPicks.map((index) => topic[index])
+      topic = bookPickArray
+    } else if (quizType === "quizGeneral") {
+      let tempTopicArray = []
+      let questionsList = [" what is not the origin of this?", " what is not the use of this?"]
+      tempTopicArray.push(topic)
+      for (let i = 0; i < 2; i++) {
+        const n = Math.floor(Math.random() * 2);
+        if (n === 0) {
+          // a positive question, we remove the word "not"
+          console.log(questionsList[i])
+          tempTopicArray.push(topic + questionsList[i].replace(" not", ""))
+        } else {
+          // a negative question
+          console.log(questionsList[i])
+          tempTopicArray.push(topic + questionsList[i])
+        }
+      }
+      topic = tempTopicArray
+      topic.forEach(i => console.log("e e e", i))
+    }
 
     for (let i in topic) {
       const result = await fetchFunction(topic[i], quizType)
@@ -307,7 +360,7 @@ function ChatbotScreen() {
       console.log("VÄÄRIN!")
       correct = false
     }
-    // updates the quizes. does a rerender while doing that
+    // updates the quizes. does a re-render while doing that
     setQuizes(quizes.map((item) => {
       if (item.id === question.id) {
         return {...item, disabled: true, correct: correct}
@@ -343,27 +396,23 @@ function ChatbotScreen() {
           <Dialog visible={menuVisible} onDismiss={() => setMenuVisible(false)}>
             <Dialog.Title>Valitse visailu tyyppi!</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">Joko yleiskysymys visa tai suosikkilistastasi visa</Text>
+              <Text variant="bodyMedium">Joko yleiskysymys tai suosikkilistastasi visa.</Text>
               <Text variant="bodyMedium">Visa on englanniksi!</Text>
               <TextInput
                 label={"Syötä aihe (mielellään englanniksi)"}
                 defaultValue={topicText}
                 onChangeText={text => setTopicText(text)}
-                >
+              >
               </TextInput>
             </Dialog.Content>
             <Dialog.Actions>
               <Button mode="contained" onPress={ () => {
-                // this is pretty hidden. Not a good practice.
-                const topic = [topicText, topicText + " origin of this?"]
-                quizTypeHandler('quizGeneral', topic)
+                quizTypeHandler('quizGeneral', topicText)
               }}
               >
                 Yleiskysymykset
               </Button>
               <Button mode="contained" onPress={ async() => {
-                await firebaseGetData()
-
                 quizTypeHandler('quizBooks', bookNames)
               }}>
                 Suosikkilista
@@ -397,9 +446,6 @@ function ChatbotScreen() {
                 if (object.answer[0] === "null"){
                   return
                 }
-                // we add 1 to the max score
-                //maxScore.current += 1
-
                 return (
                   <View key={index}>
                     <Text>{object.quiz}</Text>
@@ -507,6 +553,7 @@ function ChatbotScreen() {
               disabled={buttonOff}
               icon={"microsoft-xbox-controller"} //"microsoft-xbox-controller-off
               onPress={() => {
+                setImgCreationEnabled(false)
                 setWebSearch(true);
                 console.log("OK");
                 setMenuVisible(true)
